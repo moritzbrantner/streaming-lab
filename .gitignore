@@ -1,0 +1,5 @@
+web/.next/
+web/out/
+web/node_modules/
+web/.bun/
+.DS_Store
