@@ -10,6 +10,7 @@ The lab follows the same learning-by-experiment approach as Collision Lab: expla
 - **Buffers and backpressure** — vary producer rate, consumer rate, and buffer capacity to see when bounded memory forces the producer to slow down.
 - **Loss, jitter, and retry** — inspect packet delivery when the network becomes unreliable.
 - **Adaptive media bitrate** — see how a segmented media player can select quality from measured throughput.
+- **Watermarks and queue pressure** — compare pause/resume hysteresis with dropping newest or oldest queued work before the queue reaches capacity.
 
 ## Architecture
 

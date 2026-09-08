@@ -8,7 +8,7 @@ The roadmap is organized around observable streaming behavior rather than protoc
 - [x] Bounded buffers and backpressure.
 - [x] Loss, jitter, and retry behavior.
 - [x] Adaptive bitrate selection from changing throughput.
-- [ ] Watermarks and queue-pressure policies.
+- [x] Watermarks and queue-pressure policies.
 - [ ] Head-of-line blocking versus independent streams.
 
 ## Layer 2 — real browser streams

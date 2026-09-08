@@ -4,6 +4,7 @@ import {
   ChunkingExperiment,
   NetworkExperiment,
 } from "@/components/experiments"
+import {QueuePressureExperiment} from "@/components/queue-pressure-experiment"
 
 const concepts = [
   ["Time", "A stream has useful behavior only when you care when each piece becomes available."],
@@ -26,6 +27,7 @@ export default function Home() {
           <a href="#backpressure">Backpressure</a>
           <a href="#network">Network</a>
           <a href="#media">Media bitrate</a>
+          <a href="#watermarks">Watermarks</a>
         </nav>
       </section>
 
@@ -40,7 +42,7 @@ export default function Home() {
 
       <section className="shell intro">
         <p className="section-kicker">Layer 1</p>
-        <h2>Four small models, one mental model</h2>
+        <h2>Five small models, one mental model</h2>
         <p>
           Change one variable at a time. The numbers are deliberately simplified so the causal relationship stays
           inspectable before later experiments introduce real browser streams, media buffers, codecs, and transports.
@@ -52,6 +54,7 @@ export default function Home() {
         <BackpressureExperiment />
         <NetworkExperiment />
         <AdaptiveBitrateExperiment />
+        <QueuePressureExperiment />
       </div>
 
       <section className="shell next-layer">

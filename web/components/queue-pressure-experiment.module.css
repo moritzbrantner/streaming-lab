@@ -1,0 +1,97 @@
+.policySelect {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #0d131c;
+  color: var(--text);
+  font: inherit;
+}
+
+.chart {
+  position: relative;
+  display: flex;
+  align-items: end;
+  gap: 3px;
+  height: 210px;
+  padding: 14px 12px 0;
+  margin-bottom: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #0d131c;
+}
+
+.column {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: end;
+  flex: 1;
+  height: 100%;
+}
+
+.column span {
+  width: 100%;
+  min-height: 2px;
+  border-radius: 4px 4px 0 0;
+  background: var(--accent);
+  opacity: 0.78;
+  transition: height 120ms ease;
+}
+
+.pressured span {
+  background: var(--warn);
+}
+
+.paused span {
+  background: var(--danger);
+}
+
+.watermarkLine {
+  position: absolute;
+  z-index: 2;
+  left: 12px;
+  right: 12px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.watermarkLine i {
+  position: absolute;
+  right: 4px;
+  bottom: 3px;
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.lowWatermark {
+  background: rgba(121, 209, 139, 0.7);
+  color: var(--good);
+}
+
+.highWatermark {
+  background: rgba(240, 191, 104, 0.75);
+  color: var(--warn);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.normalDot {
+  background: var(--accent);
+}
+
+.pressureDot {
+  background: var(--warn);
+}
+
+.pausedDot {
+  background: var(--danger);
+}
