@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "typecheck": "tsc --noEmit",
-    "test": "bun test"
+    "test": "bun test",
+    "check:boundaries": "bun run scripts/check-boundaries.ts",
+    "check": "bun run test && bun run typecheck && bun run check:boundaries && bun run build"
   },
   "dependencies": {
     "next": "16.3.4",
