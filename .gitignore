@@ -1,3 +1,5 @@
+node_modules/
+.bun/
 web/.next/
 web/out/
 web/node_modules/

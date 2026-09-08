@@ -1,0 +1,10 @@
+{
+  "name": "streaming-lab",
+  "private": true,
+  "packageManager": "bun@1.4.0",
+  "workspaces": ["web"],
+  "scripts": {
+    "check": "bun run --filter streaming-lab-web check",
+    "dev": "bun run --filter streaming-lab-web dev"
+  }
+}

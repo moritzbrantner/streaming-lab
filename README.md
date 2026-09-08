@@ -16,24 +16,20 @@ The lab follows the same learning-by-experiment approach as Collision Lab: expla
 
 The first slice is intentionally browser-first. The models live in TypeScript and the interactive site is a statically exported Next.js application deployed to GitHub Pages. Rust/WASM is deferred until an experiment benefits from compute-heavy codecs, parity/FEC, compression, or another reusable kernel.
 
+The repository is a Bun workspace with `web` as the application package. Deterministic simulation code under `web/lib` is kept independent from React, Next.js, and the application/component layers by a checked source boundary.
+
 ## Local development
 
 ```bash
-cd web
-bun install
-bun test
-bun run typecheck
+bun install --frozen-lockfile
+bun run check
 bun run dev
 ```
 
-Build the static Pages output with:
-
-```bash
-bun run build
-```
+`bun run check` is the root local and CI validation contract. It delegates to the web workspace and runs tests, TypeScript checking, model-boundary validation, and the static production build.
 
 ## Deployment
 
-Pushes to `main` run tests, type checking, and the static build before deploying `web/out` to GitHub Pages.
+Pull requests run the repository validation contract plus the shared coding-tooling fast and findings checks. Pushes to `main` that affect the application or root dependency graph run the same frozen validation contract before deploying `web/out` to GitHub Pages.
 
 See [ROADMAP.md](ROADMAP.md) for the next experiment layers.
