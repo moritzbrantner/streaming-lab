@@ -1,5 +1,5 @@
 import {readdir, readFile} from "node:fs/promises"
-import {join, relative} from "node:path"
+import {relative} from "node:path"
 
 const libRoot = new URL("../lib/", import.meta.url)
 const forbiddenPrefixes = ["react", "react-dom", "next", "@/components", "@/app"]
