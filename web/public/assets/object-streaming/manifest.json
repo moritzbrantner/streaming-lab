@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "asset": "streaming-polyhedron",
+  "lods": [
+    {
+      "level": 0,
+      "label": "Proxy",
+      "file": "proxy.gltf",
+      "byteLength": 700,
+      "vertices": 4,
+      "triangles": 4,
+      "sha256": "73e6643ca4da8a1ec494882e9343a56e8ef7f3e95bf67e59b7904a032c2a62d7"
+    },
+    {
+      "level": 1,
+      "label": "Medium",
+      "file": "medium.gltf",
+      "byteLength": 767,
+      "vertices": 6,
+      "triangles": 8,
+      "sha256": "034498327994f7b786f4543ce01d0a96d902f992a9ce639bf216e3b1395c5b11"
+    },
+    {
+      "level": 2,
+      "label": "Detail",
+      "file": "detail.gltf",
+      "byteLength": 1053,
+      "vertices": 12,
+      "triangles": 20,
+      "sha256": "bed08288f6c13f2a3124dcb1e89a56793e52a020b8b6e24ba17f31b4362d0124"
+    }
+  ]
+}
