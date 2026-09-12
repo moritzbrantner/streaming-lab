@@ -77,7 +77,7 @@ export function simulateObjectStreaming({
   let elapsedMs = 0
   let wireBytes = 0
   let payloadBytes = 0
-  let previousLevelAvailable = true
+  let previousLevelAvailable: boolean = true
 
   for (const lod of objectLods) {
     const previousTotalBytes = lod.level === 0 ? 0 : objectLods[lod.level - 1].totalBytes
@@ -101,7 +101,7 @@ export function simulateObjectStreaming({
     wireBytes += stagePayloadBytes + retryBytes
 
     const transportComplete = remainingLostIndexes.length === 0
-    const canApply = strategy === "independent-lods" || previousLevelAvailable
+    const canApply: boolean = strategy === "independent-lods" || previousLevelAvailable
     const status: ObjectLodDelivery["status"] = !transportComplete
       ? "lost"
       : canApply
