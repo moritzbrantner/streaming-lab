@@ -6,6 +6,7 @@ import {
 } from "@/components/experiments"
 import {ObjectStreamingExperiment} from "@/components/object-streaming-experiment"
 import {QueuePressureExperiment} from "@/components/queue-pressure-experiment"
+import {VerifiedObjectStreamExperiment} from "@/components/verified-object-stream-experiment"
 
 const concepts = [
   ["Time", "A stream has useful behavior only when you care when each piece becomes available."],
@@ -29,7 +30,8 @@ export default function Home() {
           <a href="#network">Network</a>
           <a href="#media">Media bitrate</a>
           <a href="#watermarks">Watermarks</a>
-          <a href="#objects-3d">3D objects</a>
+          <a href="#objects-3d">3D model</a>
+          <a href="#verified-objects-3d">Real 3D assets</a>
         </nav>
       </section>
 
@@ -59,16 +61,16 @@ export default function Home() {
         <AdaptiveBitrateExperiment />
         <QueuePressureExperiment />
         <ObjectStreamingExperiment />
+        <VerifiedObjectStreamExperiment />
       </div>
 
       <section className="shell next-layer">
         <p className="section-kicker">Next layer</p>
-        <h2>From models to real streaming APIs</h2>
+        <h2>From complete LODs to real refinement streams</h2>
         <p>
-          The next experiments will replace selected models with actual browser primitives: Web Streams for pressure
-          propagation, CompressionStream for transforms, Media Source Extensions for segmented playback, progressive
-          3D manifests for real mesh assets, and WebCodecs where it improves the explanation rather than merely adding
-          technology.
+          The real 3D path now has independently addressable, content-verified glTF checkpoints. The next object slice can
+          compare those complete packages with true refinement/delta packages from the same source mesh, before adding
+          compression, spatial prioritization, or transport-specific recovery.
         </p>
       </section>
     </main>
