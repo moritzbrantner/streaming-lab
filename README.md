@@ -11,10 +11,11 @@ The lab follows the same learning-by-experiment approach as Collision Lab: expla
 - **Loss, jitter, and retry** — inspect packet delivery when the network becomes unreliable.
 - **Adaptive media bitrate** — see how a segmented media player can select quality from measured throughput.
 - **Watermarks and queue pressure** — compare pause/resume hysteresis with dropping newest or oldest queued work before the queue reaches capacity.
+- **Progressive 3D objects** — compare a small renderable proxy followed by dependent refinements with larger independent LOD checkpoints that recover more cleanly from missing packets.
 
 ## Architecture
 
-The first slice is intentionally browser-first. The models live in TypeScript and the interactive site is a statically exported Next.js application deployed to GitHub Pages. Rust/WASM is deferred until an experiment benefits from compute-heavy codecs, parity/FEC, compression, or another reusable kernel.
+The first slices are intentionally browser-first. The models live in TypeScript and the interactive site is a statically exported Next.js application deployed to GitHub Pages. Rust/WASM is deferred until an experiment benefits from compute-heavy codecs, parity/FEC, compression, or another reusable kernel.
 
 The repository is a Bun workspace with `web` as the application package. Deterministic simulation code under `web/lib` is kept independent from React, Next.js, and the application/component layers by a checked source boundary.
 

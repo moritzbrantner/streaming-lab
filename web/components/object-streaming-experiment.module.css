@@ -1,0 +1,169 @@
+.strategySelect {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #0d131c;
+  color: var(--text);
+  font: inherit;
+}
+
+.topGrid {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(300px, 1.2fr);
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.preview {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #0d131c;
+}
+
+.mesh {
+  display: block;
+  width: 100%;
+  min-height: 220px;
+}
+
+.meshFace {
+  fill: rgba(102, 217, 200, 0.08);
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.meshLine,
+.refinementLine,
+.detailLine,
+.fullLine {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.meshLine {
+  stroke: rgba(237, 243, 248, 0.52);
+  stroke-width: 1.5;
+}
+
+.refinementLine {
+  stroke: rgba(102, 217, 200, 0.72);
+  stroke-width: 1.35;
+}
+
+.detailLine {
+  stroke: rgba(240, 191, 104, 0.78);
+  stroke-width: 1.2;
+}
+
+.fullLine {
+  stroke: rgba(121, 209, 139, 0.82);
+  stroke-width: 1;
+}
+
+.vertex {
+  fill: var(--text);
+}
+
+.waitingRing {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 3;
+  stroke-dasharray: 8 8;
+}
+
+.waitingText {
+  fill: var(--muted);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.preview > div {
+  display: grid;
+  gap: 4px;
+}
+
+.preview strong {
+  font-size: 0.95rem;
+}
+
+.preview span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.stageList {
+  display: grid;
+  gap: 9px;
+  align-content: start;
+}
+
+.stage {
+  display: grid;
+  gap: 7px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: 12px;
+  background: var(--panel-soft);
+}
+
+.available {
+  border-left-color: var(--good);
+}
+
+.lost {
+  border-left-color: var(--danger);
+}
+
+.blocked {
+  border-left-color: var(--warn);
+}
+
+.stageHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.stageHeading strong {
+  font-size: 0.9rem;
+}
+
+.stageHeading span {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.stageMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 12px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stage small {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+@media (max-width: 720px) {
+  .topGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mesh {
+    min-height: 180px;
+  }
+}

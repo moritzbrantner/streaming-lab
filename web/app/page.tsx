@@ -4,6 +4,7 @@ import {
   ChunkingExperiment,
   NetworkExperiment,
 } from "@/components/experiments"
+import {ObjectStreamingExperiment} from "@/components/object-streaming-experiment"
 import {QueuePressureExperiment} from "@/components/queue-pressure-experiment"
 
 const concepts = [
@@ -28,6 +29,7 @@ export default function Home() {
           <a href="#network">Network</a>
           <a href="#media">Media bitrate</a>
           <a href="#watermarks">Watermarks</a>
+          <a href="#objects-3d">3D objects</a>
         </nav>
       </section>
 
@@ -42,10 +44,11 @@ export default function Home() {
 
       <section className="shell intro">
         <p className="section-kicker">Layer 1</p>
-        <h2>Five small models, one mental model</h2>
+        <h2>Small models, one mental model</h2>
         <p>
           Change one variable at a time. The numbers are deliberately simplified so the causal relationship stays
-          inspectable before later experiments introduce real browser streams, media buffers, codecs, and transports.
+          inspectable before later experiments introduce real browser streams, media buffers, object formats, codecs,
+          and transports.
         </p>
       </section>
 
@@ -55,6 +58,7 @@ export default function Home() {
         <NetworkExperiment />
         <AdaptiveBitrateExperiment />
         <QueuePressureExperiment />
+        <ObjectStreamingExperiment />
       </div>
 
       <section className="shell next-layer">
@@ -62,8 +66,9 @@ export default function Home() {
         <h2>From models to real streaming APIs</h2>
         <p>
           The next experiments will replace selected models with actual browser primitives: Web Streams for pressure
-          propagation, CompressionStream for transforms, Media Source Extensions for segmented playback, and WebCodecs
-          where it improves the explanation rather than merely adding technology.
+          propagation, CompressionStream for transforms, Media Source Extensions for segmented playback, progressive
+          3D manifests for real mesh assets, and WebCodecs where it improves the explanation rather than merely adding
+          technology.
         </p>
       </section>
     </main>
