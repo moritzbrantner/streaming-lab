@@ -1,0 +1,4 @@
+web/public/assets/object-streaming/*.gltf text eol=lf
+web/public/assets/object-streaming/*.json text eol=lf
+web/public/assets/object-refinement/*.gltf text eol=lf
+web/public/assets/object-refinement/*.json text eol=lf
