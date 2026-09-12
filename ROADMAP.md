@@ -31,7 +31,8 @@ The roadmap is organized around observable streaming behavior rather than protoc
 - [x] Model proxy-first LOD delivery, packet loss, retry, dependent refinements, and independent LOD checkpoints.
 - [x] Stream a real static 3D asset from a small manifest with independently addressable LOD packages.
 - [x] Verify package hashes before promoting a newly received LOD.
-- [ ] Compare complete LOD checkpoints with delta/refinement packages using the same source mesh.
+- [x] Pin content-addressed text assets to LF so byte hashes are stable across Git checkout configurations.
+- [x] Compare complete LOD checkpoints with delta/refinement packages using the same source mesh.
 - [ ] Add geometry compression and measure decode cost versus bytes saved.
 - [ ] Prioritize visible or nearby mesh regions once the whole-object LOD path is deterministic.
 - [ ] Explore parity/FEC for high-priority base geometry before adding more transport-specific behavior.
