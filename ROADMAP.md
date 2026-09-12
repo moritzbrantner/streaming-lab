@@ -29,8 +29,8 @@ The roadmap is organized around observable streaming behavior rather than protoc
 ## Layer 4 — 3D object delivery
 
 - [x] Model proxy-first LOD delivery, packet loss, retry, dependent refinements, and independent LOD checkpoints.
-- [ ] Stream a real static 3D asset from a small manifest with independently addressable LOD packages.
-- [ ] Verify package hashes before promoting a newly received LOD.
+- [x] Stream a real static 3D asset from a small manifest with independently addressable LOD packages.
+- [x] Verify package hashes before promoting a newly received LOD.
 - [ ] Compare complete LOD checkpoints with delta/refinement packages using the same source mesh.
 - [ ] Add geometry compression and measure decode cost versus bytes saved.
 - [ ] Prioritize visible or nearby mesh regions once the whole-object LOD path is deterministic.
