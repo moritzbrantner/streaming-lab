@@ -4,6 +4,7 @@ import {
   ChunkingExperiment,
   NetworkExperiment,
 } from "@/components/experiments"
+import {MeshCompressionExperiment} from "@/components/mesh-compression-experiment"
 import {MeshRefinementExperiment} from "@/components/mesh-refinement-experiment"
 import {ObjectStreamingExperiment} from "@/components/object-streaming-experiment"
 import {QueuePressureExperiment} from "@/components/queue-pressure-experiment"
@@ -34,6 +35,7 @@ export default function Home() {
           <a href="#objects-3d">3D model</a>
           <a href="#verified-objects-3d">Real 3D assets</a>
           <a href="#mesh-refinements-3d">3D refinements</a>
+          <a href="#mesh-compression-3d">3D compression</a>
         </nav>
       </section>
 
@@ -65,15 +67,16 @@ export default function Home() {
         <ObjectStreamingExperiment />
         <VerifiedObjectStreamExperiment />
         <MeshRefinementExperiment />
+        <MeshCompressionExperiment />
       </div>
 
       <section className="shell next-layer">
         <p className="section-kicker">Next layer</p>
-        <h2>Compression and selective geometry delivery</h2>
+        <h2>Selective geometry delivery</h2>
         <p>
-          The 3D path now compares independently recoverable checkpoints with exact dependent refinement packages from
-          the same source hierarchy. The next useful object experiments can measure geometry compression and decode cost,
-          then prioritize visible or nearby mesh regions before introducing transport-specific recovery such as FEC.
+          Whole-object checkpoints and refinements now have exact content verification plus deterministic lossless
+          compression with observable decode cost. The next useful object experiment should prioritize visible or nearby
+          mesh regions before introducing transport-specific recovery such as parity or FEC.
         </p>
       </section>
     </main>
