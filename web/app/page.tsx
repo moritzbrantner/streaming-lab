@@ -4,6 +4,7 @@ import {
   ChunkingExperiment,
   NetworkExperiment,
 } from "@/components/experiments"
+import {MeshRefinementExperiment} from "@/components/mesh-refinement-experiment"
 import {ObjectStreamingExperiment} from "@/components/object-streaming-experiment"
 import {QueuePressureExperiment} from "@/components/queue-pressure-experiment"
 import {VerifiedObjectStreamExperiment} from "@/components/verified-object-stream-experiment"
@@ -32,6 +33,7 @@ export default function Home() {
           <a href="#watermarks">Watermarks</a>
           <a href="#objects-3d">3D model</a>
           <a href="#verified-objects-3d">Real 3D assets</a>
+          <a href="#mesh-refinements-3d">3D refinements</a>
         </nav>
       </section>
 
@@ -62,15 +64,16 @@ export default function Home() {
         <QueuePressureExperiment />
         <ObjectStreamingExperiment />
         <VerifiedObjectStreamExperiment />
+        <MeshRefinementExperiment />
       </div>
 
       <section className="shell next-layer">
         <p className="section-kicker">Next layer</p>
-        <h2>From complete LODs to real refinement streams</h2>
+        <h2>Compression and selective geometry delivery</h2>
         <p>
-          The real 3D path now has independently addressable, content-verified glTF checkpoints. The next object slice can
-          compare those complete packages with true refinement/delta packages from the same source mesh, before adding
-          compression, spatial prioritization, or transport-specific recovery.
+          The 3D path now compares independently recoverable checkpoints with exact dependent refinement packages from
+          the same source hierarchy. The next useful object experiments can measure geometry compression and decode cost,
+          then prioritize visible or nearby mesh regions before introducing transport-specific recovery such as FEC.
         </p>
       </section>
     </main>
