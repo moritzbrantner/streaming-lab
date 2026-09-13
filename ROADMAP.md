@@ -33,7 +33,7 @@ The roadmap is organized around observable streaming behavior rather than protoc
 - [x] Verify package hashes before promoting a newly received LOD.
 - [x] Pin content-addressed text assets to LF so byte hashes are stable across Git checkout configurations.
 - [x] Compare complete LOD checkpoints with delta/refinement packages using the same source mesh.
-- [ ] Add geometry compression and measure decode cost versus bytes saved.
+- [x] Add deterministic lossless geometry compression and measure browser-local decode cost versus bytes saved.
 - [ ] Prioritize visible or nearby mesh regions once the whole-object LOD path is deterministic.
 - [ ] Explore parity/FEC for high-priority base geometry before adding more transport-specific behavior.
 
