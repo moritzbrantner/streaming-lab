@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "asset": "subdivided-octahedron",
   "sourceCheckpoint": "detail.gltf",
   "sourceGeometrySha256": "4d7bdf0500aaca94a4f1edef2f2c3dc6d6beb40ff1cee684fd4af071716cb0ed",
@@ -55,6 +55,30 @@
       "appendedVertices": 48,
       "triangles": 128,
       "sha256": "b551a3e86b0d5fb166ef3c9e3efec864bbd51d3640d59e06e68312493c179fdf",
+      "baseGeometrySha256": "72775dc26857daa0ef41c86416a6a527048558f54566bfd23cf0dd7f5f499d31",
+      "resultGeometrySha256": "4d7bdf0500aaca94a4f1edef2f2c3dc6d6beb40ff1cee684fd4af071716cb0ed"
+    }
+  ],
+  "compressedRefinements": [
+    {
+      "fromLevel": 0,
+      "toLevel": 1,
+      "file": "refine-0-1-compressed.json",
+      "byteLength": 713,
+      "appendedVertices": 12,
+      "triangles": 32,
+      "sha256": "80e5e237b6c7f414efd8ffb6137b060c4567d6f3c33a84da6f18268a01978a70",
+      "baseGeometrySha256": "426c3f26e9c7346f698c0c3017e3a6f2b49a20aa26cc1b89d4f034639bab9837",
+      "resultGeometrySha256": "72775dc26857daa0ef41c86416a6a527048558f54566bfd23cf0dd7f5f499d31"
+    },
+    {
+      "fromLevel": 1,
+      "toLevel": 2,
+      "file": "refine-1-2-compressed.json",
+      "byteLength": 1654,
+      "appendedVertices": 48,
+      "triangles": 128,
+      "sha256": "1b17ddfbc3d7f9855e4092a2e86f1760e2effc595768dd704318513f36ae3b65",
       "baseGeometrySha256": "72775dc26857daa0ef41c86416a6a527048558f54566bfd23cf0dd7f5f499d31",
       "resultGeometrySha256": "4d7bdf0500aaca94a4f1edef2f2c3dc6d6beb40ff1cee684fd4af071716cb0ed"
     }
