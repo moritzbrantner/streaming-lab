@@ -108,7 +108,9 @@ function resultRows(sourceOrder: MeshRegionStreamingResult, viewPriority: MeshRe
   const prioritizedById = new Map(viewPriority.deliveries.map((delivery) => [delivery.id, delivery]))
   return sourceOrder.deliveries.map((source) => {
     const prioritized = prioritizedById.get(source.id)
-    if (prioritized === undefined) {\n      throw new Error(`missing prioritized region ${source.id}`)\n    }
+    if (prioritized === undefined) {
+      throw new Error(`missing prioritized region ${source.id}`)
+    }
     return {source, prioritized}
   })
 }
@@ -132,28 +134,38 @@ export function MeshRegionPrioritizationExperiment() {
           cache: "no-store",
           signal: controller.signal,
         })
-        if (!manifestResponse.ok) {\n          throw new Error(`manifest request failed with ${manifestResponse.status}`)\n        }
+        if (!manifestResponse.ok) {
+          throw new Error(`manifest request failed with ${manifestResponse.status}`)
+        }
         const manifest = parseRefinementManifest(await manifestResponse.text())
         const detailEntry = manifest.checkpoints.at(-1)
-        if (detailEntry === undefined) {\n          throw new Error("refinement manifest has no detail checkpoint")\n        }
+        if (detailEntry === undefined) {
+          throw new Error("refinement manifest has no detail checkpoint")
+        }
 
         const detailResponse = await fetch(`./assets/object-refinement/${detailEntry.file}`, {
           cache: "no-store",
           signal: controller.signal,
         })
-        if (!detailResponse.ok) {\n          throw new Error(`detail request failed with ${detailResponse.status}`)\n        }
+        if (!detailResponse.ok) {
+          throw new Error(`detail request failed with ${detailResponse.status}`)
+        }
         const text = await detailResponse.text()
         const byteLength = new TextEncoder().encode(text).byteLength
         if (byteLength !== detailEntry.byteLength) {
           throw new Error(`detail byte length mismatch: expected ${detailEntry.byteLength}, got ${byteLength}`)
         }
-        if (await textSha256(text) !== detailEntry.sha256) {\n          throw new Error("detail package SHA-256 mismatch")\n        }
+        if (await textSha256(text) !== detailEntry.sha256) {
+          throw new Error("detail package SHA-256 mismatch")
+        }
 
         const geometry = decodeEmbeddedGltf(text)
         if (await sha256Hex(canonicalMeshBytes(geometry)) !== detailEntry.geometrySha256) {
           throw new Error("detail geometry fingerprint mismatch")
         }
-        if (!cancelled) {\n          setPartition(partitionMeshRegions(geometry))\n        }
+        if (!cancelled) {
+          setPartition(partitionMeshRegions(geometry))
+        }
       } catch (caught) {
         if (!controller.signal.aborted && !cancelled) {
           setAssetError(caught instanceof Error ? caught.message : "mesh region experiment failed")
@@ -170,7 +182,9 @@ export function MeshRegionPrioritizationExperiment() {
 
   const camera = cameraPresets[cameraPresetId]
   const comparison = useMemo(() => {
-    if (partition === null) {\n      return null\n    }
+    if (partition === null) {
+      return null
+    }
     const common = {
       partition,
       cameraPosition: camera.position,
