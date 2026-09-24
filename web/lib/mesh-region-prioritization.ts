@@ -87,15 +87,15 @@ function magnitude(value: Vector3) {
 
 function normalize(value: Vector3): Vector3 {
   const length = magnitude(value)
-  if (length === 0) throw new Error("mesh region direction must be non-zero")
+  if (length === 0) {\n    throw new Error("mesh region direction must be non-zero")\n  }
   return [value[0] / length, value[1] / length, value[2] / length]
 }
 
 function regionIdForNormal(normal: Vector3): MeshRegionId {
   let axis: 0 | 1 | 2 = 0
-  if (Math.abs(normal[1]) > Math.abs(normal[0])) axis = 1
+  if (Math.abs(normal[1]) > Math.abs(normal[0])) {\n    axis = 1\n  }
   const currentMagnitude = axis === 0 ? Math.abs(normal[0]) : Math.abs(normal[1])
-  if (Math.abs(normal[2]) > currentMagnitude) axis = 2
+  if (Math.abs(normal[2]) > currentMagnitude) {\n    axis = 2\n  }
   const direction = normal[axis] >= 0 ? 1 : 0
   return axisIds[axis][direction]
 }
@@ -105,7 +105,7 @@ function trianglePayloadBytes(vertexCount: number, triangleCount: number) {
 }
 
 function validatePosition(position: Vector3) {
-  if (!position.every(Number.isFinite)) throw new Error("mesh positions must contain finite coordinates")
+  if (!position.every(Number.isFinite)) {\n    throw new Error("mesh positions must contain finite coordinates")\n  }
 }
 
 export function partitionMeshRegions(geometry: MeshGeometry): MeshRegionPartition {
@@ -176,7 +176,7 @@ export function partitionMeshRegions(geometry: MeshGeometry): MeshRegionPartitio
 
   const triangleCount = geometry.indices.length / 3
   const regionTriangleCount = partitioned.reduce((total, region) => total + region.triangleCount, 0)
-  if (regionTriangleCount !== triangleCount) throw new Error("mesh region partitioning lost triangles")
+  if (regionTriangleCount !== triangleCount) {\n    throw new Error("mesh region partitioning lost triangles")\n  }
 
   return {
     regions: partitioned,
@@ -217,10 +217,10 @@ export function simulateMeshRegionStreaming(input: MeshRegionStreamingInput): Me
     }
   })
   const ordered = candidates.toSorted((left, right) => {
-    if (input.strategy === "source-order") return left.firstTriangle - right.firstTriangle
-    if (left.viewFacing !== right.viewFacing) return left.viewFacing ? -1 : 1
+    if (input.strategy === "source-order") {\n      return left.firstTriangle - right.firstTriangle\n    }
+    if (left.viewFacing !== right.viewFacing) {\n      return left.viewFacing ? -1 : 1\n    }
     const distanceDifference = left.distance - right.distance
-    if (Math.abs(distanceDifference) > 1e-9) return distanceDifference
+    if (Math.abs(distanceDifference) > 1e-9) {\n      return distanceDifference\n    }
     return left.firstTriangle - right.firstTriangle
   })
 
