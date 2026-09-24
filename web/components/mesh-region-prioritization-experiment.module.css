@@ -1,0 +1,151 @@
+.selectControl,
+.numberControl {
+  display: grid;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.selectControl select,
+.numberEditor input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #0d131c;
+  color: var(--text);
+  font: inherit;
+}
+
+.selectControl select {
+  padding: 10px 12px;
+}
+
+.numberEditor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.numberEditor input {
+  padding: 10px 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.numberEditor small {
+  min-width: 42px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.payloadNote,
+.status,
+.error {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.error {
+  color: var(--danger);
+}
+
+.orderGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.orderGrid h3 {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+}
+
+.orderList {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: delivery;
+}
+
+.orderList li {
+  counter-increment: delivery;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 9px;
+  align-items: center;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #0d131c;
+}
+
+.orderList li::before {
+  content: counter(delivery);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.orderList strong {
+  text-transform: capitalize;
+}
+
+.orderList span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.orderList .viewFacing {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.summaryWrap,
+.regionTableWrap {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.summaryTable,
+.regionTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.summaryTable th,
+.summaryTable td,
+.regionTable th,
+.regionTable td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.summaryTable th,
+.regionTable th {
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.viewFacingRow td:first-child {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+@media (max-width: 700px) {
+  .orderGrid {
+    grid-template-columns: 1fr;
+  }
+}
