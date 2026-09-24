@@ -73,13 +73,13 @@ export async function buildMeshRegionAssetSet() {
         byteLength: Buffer.byteLength(text),
         sha256: sha256Text(text),
         geometrySha256,
-        provenanceSha256: sha256Text(serializeMeshRegionProvenance(regionPackage)),
         firstTriangle: summary.firstTriangle,
         triangleCount: summary.triangleCount,
         vertexCount: summary.vertexCount,
         geometryBytes: summary.geometryBytes,
         center: summary.center,
         normal: summary.normal,
+        provenanceSha256: sha256Text(serializeMeshRegionProvenance(regionPackage)),
       },
     }
   })
