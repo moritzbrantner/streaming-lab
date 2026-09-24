@@ -59,7 +59,12 @@ function PreciseNumberInput({
   onCommit: (value: number) => void
 }) {
   const commit = (input: HTMLInputElement) => {
-    const parsed = Number(input.value)
+    const draft = input.value.trim()
+    if (draft === "") {
+      input.value = String(value)
+      return
+    }
+    const parsed = Number(draft)
     if (!Number.isFinite(parsed)) {
       input.value = String(value)
       return
