@@ -12,6 +12,7 @@ The lab follows the same learning-by-experiment approach as Collision Lab: expla
 - **Adaptive media bitrate** — see how a segmented media player can select quality from measured throughput.
 - **Watermarks and queue pressure** — compare pause/resume hysteresis with dropping newest or oldest queued work before the queue reaches capacity.
 - **Progressive 3D objects** — compare a small renderable proxy followed by dependent refinements with larger independent LOD checkpoints that recover more cleanly from missing packets.
+- **View-prioritized mesh regions** — partition the verified detail mesh by surface direction and compare source-order delivery with view-facing and nearby scheduling.
 
 ## Architecture
 
