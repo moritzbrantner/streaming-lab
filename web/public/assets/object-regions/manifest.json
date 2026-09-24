@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "asset": "subdivided-octahedron",
+  "sourceCheckpoint": "detail.gltf",
+  "sourceByteLength": 2726,
+  "sourceSha256": "3a557e43f168ab3860171b103fb8f9ecd6b6399b89116d8f49efdbbbd4f093cd",
+  "sourceGeometrySha256": "4d7bdf0500aaca94a4f1edef2f2c3dc6d6beb40ff1cee684fd4af071716cb0ed",
+  "sourceVertices": 66,
+  "sourceTriangles": 128,
+  "sourceGeometryBytes": 1560,
+  "regions": [
+    {
+      "id": "right",
+      "file": "region-right.json",
+      "byteLength": 1670,
+      "sha256": "3d1adc43692bc74280d494f1b483dd4d98a544cd5071d2c05b4106a5ffd6ba5e",
+      "geometrySha256": "145a2eb431f49db70d007e57537608546b49c1f4bb124a419857db090204ebac",
+      "firstTriangle": 0,
+      "triangleCount": 28,
+      "vertexCount": 21,
+      "geometryBytes": 420,
+      "center": [
+        0.7573179517473493,
+        3.96508223080413e-18,
+        1.9825411154020653e-17
+      ],
+      "normal": [
+        1,
+        5.080606023848749e-18,
+        -3.556424216694124e-17
+      ]
+    },
+    {
+      "id": "top",
+      "file": "region-top.json",
+      "byteLength": 1307,
+      "sha256": "6c5e099e5083da90a115a7eebdd17fd851a55a841bb3a1fbbf4bc60b4954290c",
+      "geometrySha256": "559ab07085c18edbee45955b201a1a252739660c046cc054fe693370eb14fd58",
+      "firstTriangle": 4,
+      "triangleCount": 20,
+      "vertexCount": 17,
+      "geometryBytes": 324,
+      "center": [
+        2.7755575615628915e-18,
+        0.8225888053576152,
+        1.6653345369377347e-17
+      ],
+      "normal": [
+        -9.880148081260929e-18,
+        1,
+        6.586765387507286e-18
+      ]
+    },
+    {
+      "id": "front",
+      "file": "region-front.json",
+      "byteLength": 1007,
+      "sha256": "fca73ae5858e513ff3878ebcfafc1685d49c6b52df410290b29357cbf19cf709",
+      "geometrySha256": "ebaeeb7bfca8ad7edbaa0a16d3bbe7abcd99ba0a41b1fad0fdca9443a67d1cec",
+      "firstTriangle": 8,
+      "triangleCount": 16,
+      "vertexCount": 13,
+      "geometryBytes": 252,
+      "center": [
+        -3.469446951953614e-18,
+        1.734723475976807e-17,
+        0.8672483662764232
+      ],
+      "normal": [
+        0,
+        1.567232351328201e-17,
+        1
+      ]
+    },
+    {
+      "id": "left",
+      "file": "region-left.json",
+      "byteLength": 1696,
+      "sha256": "484fa18792b42f5422d226d6033b04eae7a085e6cf31b8fee7da9121458677dd",
+      "geometrySha256": "bdb8ff59958f4ce55f03233416cee0513877c0942423f9ef49b9bba35d2a901d",
+      "firstTriangle": 20,
+      "triangleCount": 28,
+      "vertexCount": 21,
+      "geometryBytes": 420,
+      "center": [
+        -0.7573179517473493,
+        1.1895246692412391e-17,
+        1.9825411154020653e-17
+      ],
+      "normal": [
+        -1,
+        5.080606023848749e-18,
+        -3.556424216694124e-17
+      ]
+    },
+    {
+      "id": "bottom",
+      "file": "region-bottom.json",
+      "byteLength": 1341,
+      "sha256": "5e4f15d70193410eb1c049680e95a893c2aa447e9b3340ff8fc6546a8c78eb64",
+      "geometrySha256": "326ffc20874ff97b15d6ff93f23db8e67b4a8a03d34ea755e6e178b8f03c0092",
+      "firstTriangle": 36,
+      "triangleCount": 20,
+      "vertexCount": 17,
+      "geometryBytes": 324,
+      "center": [
+        -2.7755575615628915e-18,
+        -0.8225888053576152,
+        1.6653345369377347e-17
+      ],
+      "normal": [
+        9.880148081260929e-18,
+        -1,
+        6.586765387507286e-18
+      ]
+    },
+    {
+      "id": "back",
+      "file": "region-back.json",
+      "byteLength": 1032,
+      "sha256": "ab0373a6d43c6a5954fe92357a4e7d5ca913ac38432eae6b9d3c29286ed83920",
+      "geometrySha256": "9b4eaf4e5cb1e5f8e9b6a45c9f5a28d9699bbf4ea04e489e942248c21fa30c67",
+      "firstTriangle": 72,
+      "triangleCount": 16,
+      "vertexCount": 13,
+      "geometryBytes": 252,
+      "center": [
+        -3.469446951953614e-18,
+        1.734723475976807e-17,
+        -0.8672483662764232
+      ],
+      "normal": [
+        0,
+        1.567232351328201e-17,
+        -1
+      ]
+    }
+  ]
+}
