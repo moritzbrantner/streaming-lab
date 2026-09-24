@@ -183,6 +183,21 @@
   font-weight: 800;
 }
 
+.verificationCell {
+  display: grid;
+  gap: 4px;
+  min-width: 190px;
+  white-space: normal !important;
+}
+
+.verificationMessage {
+  max-width: 28rem;
+  color: var(--danger);
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
 @media (max-width: 700px) {
   .orderGrid {
     grid-template-columns: 1fr;
