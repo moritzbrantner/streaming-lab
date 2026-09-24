@@ -6,6 +6,7 @@ import {
   simulateObjectStreaming,
   type ObjectStreamingStrategy,
 } from "@/lib/object-streaming"
+import {PreciseRangeControl} from "./precise-range-control"
 import styles from "./object-streaming-experiment.module.css"
 
 const strategyLabels: Record<ObjectStreamingStrategy, string> = {
@@ -18,41 +19,6 @@ const strategyExplanations: Record<ObjectStreamingStrategy, string> = {
     "Each package only adds the difference from the previous LOD. This minimizes payload, but one unrecovered layer prevents later refinements from being applied.",
   "independent-lods":
     "Each package is a complete mesh checkpoint. It sends more data, but a later LOD can still become usable even when an earlier package was lost.",
-}
-
-function RangeControl({
-  label,
-  value,
-  min,
-  max,
-  step = 1,
-  unit,
-  onChange,
-}: {
-  label: string
-  value: number
-  min: number
-  max: number
-  step?: number
-  unit: string
-  onChange: (value: number) => void
-}) {
-  return (
-    <label className="control">
-      <span>
-        {label}
-        <output>{value.toLocaleString()} {unit}</output>
-      </span>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(Number(event.target.value))}
-      />
-    </label>
-  )
 }
 
 function Metric({label, value}: {label: string; value: string}) {
@@ -146,9 +112,9 @@ export function ObjectStreamingExperiment() {
       </header>
       <div className="experiment-body">
         <div className="controls">
-          <RangeControl label="Bandwidth" value={bandwidthMbps} min={0.5} max={20} step={0.5} unit="Mbps" onChange={setBandwidthMbps} />
-          <RangeControl label="Path latency" value={latencyMs} min={0} max={300} step={10} unit="ms" onChange={setLatencyMs} />
-          <RangeControl label="Packet loss" value={lossPercent} min={0} max={35} unit="%" onChange={setLossPercent} />
+          <PreciseRangeControl label="Bandwidth" value={bandwidthMbps} min={0.5} max={20} step={0.5} unit="Mbps" onChange={setBandwidthMbps} />
+          <PreciseRangeControl label="Path latency" value={latencyMs} min={0} max={300} step={10} unit="ms" onChange={setLatencyMs} />
+          <PreciseRangeControl label="Packet loss" value={lossPercent} min={0} max={35} unit="%" onChange={setLossPercent} />
           <label className="toggle-control">
             <input type="checkbox" checked={retry} onChange={(event) => setRetry(event.target.checked)} />
             <span>Retry missing packets once</span>
