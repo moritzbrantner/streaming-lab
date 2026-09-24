@@ -71,6 +71,7 @@ export type MeshRegionManifestEntry = {
   byteLength: number
   sha256: string
   geometrySha256: string
+  provenanceSha256: string
   firstTriangle: number
   triangleCount: number
   vertexCount: number
@@ -332,6 +333,13 @@ export function serializeMeshRegionPackage(regionPackage: MeshRegionPackage) {
   return `${JSON.stringify(regionPackage)}\n`
 }
 
+export function serializeMeshRegionProvenance(regionPackage: MeshRegionPackage) {
+  return JSON.stringify({
+    sourceTriangleIndexes: regionPackage.sourceTriangleIndexes,
+    sourceVertexIndexes: regionPackage.sourceVertexIndexes,
+  })
+}
+
 export function parseMeshRegionPackage(text: string): MeshRegionPackage {
   const value: unknown = JSON.parse(text)
   if (
@@ -444,6 +452,8 @@ export function parseMeshRegionManifest(text: string): MeshRegionManifest {
       !sha256Pattern.test(entry.sha256) ||
       typeof entry.geometrySha256 !== "string" ||
       !sha256Pattern.test(entry.geometrySha256) ||
+      typeof entry.provenanceSha256 !== "string" ||
+      !sha256Pattern.test(entry.provenanceSha256) ||
       !isNonNegativeInteger(entry.firstTriangle) ||
       !isPositiveInteger(entry.triangleCount) ||
       !isPositiveInteger(entry.vertexCount) ||
@@ -468,6 +478,7 @@ export function parseMeshRegionManifest(text: string): MeshRegionManifest {
       byteLength: entry.byteLength,
       sha256: entry.sha256,
       geometrySha256: entry.geometrySha256,
+      provenanceSha256: entry.provenanceSha256,
       firstTriangle: entry.firstTriangle,
       triangleCount: entry.triangleCount,
       vertexCount: entry.vertexCount,
