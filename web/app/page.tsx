@@ -6,6 +6,7 @@ import {
 } from "@/components/experiments"
 import {MeshCompressionExperiment} from "@/components/mesh-compression-experiment"
 import {MeshRefinementExperiment} from "@/components/mesh-refinement-experiment"
+import {MeshRegionPrioritizationExperiment} from "@/components/mesh-region-prioritization-experiment"
 import {ObjectStreamingExperiment} from "@/components/object-streaming-experiment"
 import {QueuePressureExperiment} from "@/components/queue-pressure-experiment"
 import {VerifiedObjectStreamExperiment} from "@/components/verified-object-stream-experiment"
@@ -36,6 +37,7 @@ export default function Home() {
           <a href="#verified-objects-3d">Real 3D assets</a>
           <a href="#mesh-refinements-3d">3D refinements</a>
           <a href="#mesh-compression-3d">3D compression</a>
+          <a href="#mesh-regions-3d">3D regions</a>
         </nav>
       </section>
 
@@ -68,15 +70,16 @@ export default function Home() {
         <VerifiedObjectStreamExperiment />
         <MeshRefinementExperiment />
         <MeshCompressionExperiment />
+        <MeshRegionPrioritizationExperiment />
       </div>
 
       <section className="shell next-layer">
         <p className="section-kicker">Next layer</p>
-        <h2>Selective geometry delivery</h2>
+        <h2>Verified regional delivery</h2>
         <p>
-          Whole-object checkpoints and refinements now have exact content verification plus deterministic lossless
-          compression with observable decode cost. The next useful object experiment should prioritize visible or nearby
-          mesh regions before introducing transport-specific recovery such as parity or FEC.
+          View-priority now changes when useful geometry arrives without changing the total modeled region payload or
+          whole-mesh completion time. The next object slice should materialize those regions as independently addressable,
+          verified packages before protecting high-priority base geometry with parity or FEC.
         </p>
       </section>
     </main>
