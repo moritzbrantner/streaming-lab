@@ -34,7 +34,8 @@ The roadmap is organized around observable streaming behavior rather than protoc
 - [x] Pin content-addressed text assets to LF so byte hashes are stable across Git checkout configurations.
 - [x] Compare complete LOD checkpoints with delta/refinement packages using the same source mesh.
 - [x] Add deterministic lossless geometry compression and measure browser-local decode cost versus bytes saved.
-- [ ] Prioritize visible or nearby mesh regions once the whole-object LOD path is deterministic.
+- [x] Model deterministic view-facing and nearby mesh-region prioritization over the verified source mesh.
+- [ ] Materialize independently addressable region packages and verify them before promotion.
 - [ ] Explore parity/FEC for high-priority base geometry before adding more transport-specific behavior.
 
 ## Layer 5 — robustness
