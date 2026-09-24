@@ -14,6 +14,7 @@ import {
   type MeshRegionStreamingResult,
   type Vector3,
 } from "@/lib/mesh-region-prioritization"
+import {PreciseRangeControl} from "./precise-range-control"
 import styles from "./mesh-region-prioritization-experiment.module.css"
 
 type CameraPresetId = "front" | "right" | "back" | "left" | "top" | "bottom"
@@ -45,70 +46,6 @@ async function sha256Hex(bytes: BufferSource) {
 
 async function textSha256(text: string) {
   return sha256Hex(new TextEncoder().encode(text))
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value))
-}
-
-function PreciseNumberInput({
-  label,
-  value,
-  min,
-  max,
-  step,
-  unit,
-  onCommit,
-}: {
-  label: string
-  value: number
-  min: number
-  max: number
-  step: number
-  unit: string
-  onCommit: (value: number) => void
-}) {
-  const commit = (input: HTMLInputElement) => {
-    const draft = input.value.trim()
-    if (draft === "") {
-      input.value = String(value)
-      return
-    }
-    const parsed = Number(draft)
-    if (!Number.isFinite(parsed)) {
-      input.value = String(value)
-      return
-    }
-    const next = clamp(parsed, min, max)
-    input.value = String(next)
-    onCommit(next)
-  }
-
-  return (
-    <label className={styles.numberControl}>
-      <span>{label}</span>
-      <span className={styles.numberEditor}>
-        <input
-          type="number"
-          defaultValue={value}
-          min={min}
-          max={max}
-          step={step}
-          onBlur={(event) => commit(event.currentTarget)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              event.currentTarget.blur()
-            }
-            if (event.key === "Escape") {
-              event.currentTarget.value = String(value)
-              event.currentTarget.blur()
-            }
-          }}
-        />
-        <small>{unit}</small>
-      </span>
-    </label>
-  )
 }
 
 function formatTime(value: number | null) {
@@ -336,32 +273,32 @@ export function MeshRegionPrioritizationExperiment() {
               ))}
             </select>
           </label>
-          <PreciseNumberInput
+          <PreciseRangeControl
             label="Bandwidth"
             value={bandwidthMbps}
             min={0.1}
             max={100}
             step={0.1}
             unit="Mbps"
-            onCommit={setBandwidthMbps}
+            onChange={setBandwidthMbps}
           />
-          <PreciseNumberInput
+          <PreciseRangeControl
             label="Per-region latency"
             value={latencyMs}
             min={0}
             max={500}
             step={1}
             unit="ms"
-            onCommit={setLatencyMs}
+            onChange={setLatencyMs}
           />
-          <PreciseNumberInput
+          <PreciseRangeControl
             label="Observation budget"
             value={budgetMs}
             min={0}
             max={5000}
             step={1}
             unit="ms"
-            onCommit={setBudgetMs}
+            onChange={setBudgetMs}
           />
           <button
             className={styles.replayButton}
