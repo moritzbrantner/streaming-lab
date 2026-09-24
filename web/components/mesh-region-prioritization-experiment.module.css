@@ -1,41 +1,18 @@
-.selectControl,
-.numberControl {
+.selectControl {
   display: grid;
   gap: 8px;
   font-size: 0.9rem;
   font-weight: 700;
 }
 
-.selectControl select,
-.numberEditor input {
+.selectControl select {
   width: 100%;
   border: 1px solid var(--border);
   border-radius: 10px;
+  padding: 10px 12px;
   background: #0d131c;
   color: var(--text);
   font: inherit;
-}
-
-.selectControl select {
-  padding: 10px 12px;
-}
-
-.numberEditor {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 8px;
-}
-
-.numberEditor input {
-  padding: 10px 12px;
-  font-variant-numeric: tabular-nums;
-}
-
-.numberEditor small {
-  min-width: 42px;
-  color: var(--muted);
-  font-size: 0.78rem;
 }
 
 .payloadNote,
