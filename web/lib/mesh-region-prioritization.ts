@@ -370,12 +370,17 @@ export function parseMeshRegionPackage(text: string): MeshRegionPackage {
     throw new Error("mesh region source vertex indexes must be strictly increasing")
   }
 
-  if (value.positions.length !== sourceVertexIndexes.length || !value.positions.every(isVector3)) {
+  const rawPositions = value.positions
+  if (rawPositions.length !== sourceVertexIndexes.length || !rawPositions.every(isVector3)) {
     throw new Error("mesh region positions do not match source vertex provenance")
   }
+  const positions = rawPositions.map((position) => [...position] as Vector3)
+
+  const rawIndices = value.indices
   if (
-    value.indices.length !== sourceTriangleIndexes.length * 3 ||
-    !value.indices.every((index) => isNonNegativeInteger(index) && index < value.positions.length)
+    rawIndices.length !== sourceTriangleIndexes.length * 3 ||
+    !rawIndices.every(isNonNegativeInteger) ||
+    rawIndices.some((index) => index >= positions.length)
   ) {
     throw new Error("mesh region indices do not match its source triangle provenance")
   }
@@ -387,8 +392,8 @@ export function parseMeshRegionPackage(text: string): MeshRegionPackage {
     firstTriangle: value.firstTriangle,
     sourceTriangleIndexes: [...sourceTriangleIndexes],
     sourceVertexIndexes: [...sourceVertexIndexes],
-    positions: value.positions.map((position) => [...position] as Vector3),
-    indices: [...value.indices],
+    positions,
+    indices: [...rawIndices],
   }
 }
 
