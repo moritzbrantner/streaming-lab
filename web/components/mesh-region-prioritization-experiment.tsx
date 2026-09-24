@@ -7,6 +7,7 @@ import {
   parseMeshRegionManifest,
   parseMeshRegionPackage,
   partitionMeshRegionManifest,
+  serializeMeshRegionProvenance,
   simulateMeshRegionStreaming,
   type MeshRegionId,
   type MeshRegionManifest,
@@ -264,6 +265,10 @@ export function MeshRegionPrioritizationExperiment() {
             regionPackage.sourceVertexIndexes.length !== entry.vertexCount
           ) {
             throw new Error("package provenance does not match the manifest")
+          }
+
+          if (await textSha256(serializeMeshRegionProvenance(regionPackage)) !== entry.provenanceSha256) {
+            throw new Error("package source provenance fingerprint mismatch")
           }
 
           const geometry = decodeMeshRegionPackage(regionPackage)
