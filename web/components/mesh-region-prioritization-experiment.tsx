@@ -473,8 +473,19 @@ export function MeshRegionPrioritizationExperiment() {
                           <td>{source.id}</td>
                           <td>{entry === undefined ? "missing" : formatBytes(entry.byteLength)}</td>
                           <td>{formatBytes(source.geometryBytes)}</td>
-                          <td className={state?.status === "verified" ? styles.verified : state?.status === "rejected" ? styles.rejected : undefined}>
-                            {statusLabel(state?.status)}
+                          <td
+                            className={`${styles.verificationCell} ${
+                              state?.status === "verified"
+                                ? styles.verified
+                                : state?.status === "rejected"
+                                  ? styles.rejected
+                                  : ""
+                            }`}
+                          >
+                            <span>{statusLabel(state?.status)}</span>
+                            {state?.status === "rejected" && (
+                              <small className={styles.verificationMessage} role="alert">{state.message}</small>
+                            )}
                           </td>
                           <td>{source.viewFacing ? "yes" : "no"}</td>
                           <td>{source.order}</td>
