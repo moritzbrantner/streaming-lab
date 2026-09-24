@@ -1,22 +1,31 @@
 "use client"
 
 import {useEffect, useMemo, useState} from "react"
-import {decodeEmbeddedGltf} from "@/lib/object-asset"
-import {canonicalMeshBytes, parseRefinementManifest} from "@/lib/mesh-refinement"
+import {canonicalMeshBytes} from "@/lib/mesh-refinement"
 import {
-  partitionMeshRegions,
+  decodeMeshRegionPackage,
+  parseMeshRegionManifest,
+  parseMeshRegionPackage,
+  partitionMeshRegionManifest,
   simulateMeshRegionStreaming,
-  type MeshRegionPartition,
+  type MeshRegionId,
+  type MeshRegionManifest,
   type MeshRegionStreamingResult,
   type Vector3,
 } from "@/lib/mesh-region-prioritization"
 import styles from "./mesh-region-prioritization-experiment.module.css"
 
 type CameraPresetId = "front" | "right" | "back" | "left" | "top" | "bottom"
+type PackageStatus = "queued" | "fetching" | "verified" | "rejected"
 
 type CameraPreset = {
   label: string
   position: Vector3
+}
+
+type PackageState = {
+  status: PackageStatus
+  message: string
 }
 
 const cameraPresets: Record<CameraPresetId, CameraPreset> = {
@@ -120,9 +129,15 @@ function resultRows(sourceOrder: MeshRegionStreamingResult, viewPriority: MeshRe
   })
 }
 
+function statusLabel(status: PackageStatus | undefined) {
+  return status ?? "queued"
+}
+
 export function MeshRegionPrioritizationExperiment() {
-  const [partition, setPartition] = useState<MeshRegionPartition | null>(null)
+  const [manifest, setManifest] = useState<MeshRegionManifest | null>(null)
   const [assetError, setAssetError] = useState<string | null>(null)
+  const [packageStates, setPackageStates] = useState<Partial<Record<MeshRegionId, PackageState>>>({})
+  const [verificationRun, setVerificationRun] = useState(0)
   const [cameraPresetId, setCameraPresetId] = useState<CameraPresetId>("front")
   const [bandwidthMbps, setBandwidthMbps] = useState(8)
   const [latencyMs, setLatencyMs] = useState(40)
@@ -132,53 +147,28 @@ export function MeshRegionPrioritizationExperiment() {
     const controller = new AbortController()
     let cancelled = false
 
-    const load = async () => {
+    const loadManifest = async () => {
       setAssetError(null)
       try {
-        const manifestResponse = await fetch("./assets/object-refinement/manifest.json", {
+        const response = await fetch("./assets/object-regions/manifest.json", {
           cache: "no-store",
           signal: controller.signal,
         })
-        if (!manifestResponse.ok) {
-          throw new Error(`manifest request failed with ${manifestResponse.status}`)
+        if (!response.ok) {
+          throw new Error(`region manifest request failed with ${response.status}`)
         }
-        const manifest = parseRefinementManifest(await manifestResponse.text())
-        const detailEntry = manifest.checkpoints.at(-1)
-        if (detailEntry === undefined) {
-          throw new Error("refinement manifest has no detail checkpoint")
-        }
-
-        const detailResponse = await fetch(`./assets/object-refinement/${detailEntry.file}`, {
-          cache: "no-store",
-          signal: controller.signal,
-        })
-        if (!detailResponse.ok) {
-          throw new Error(`detail request failed with ${detailResponse.status}`)
-        }
-        const text = await detailResponse.text()
-        const byteLength = new TextEncoder().encode(text).byteLength
-        if (byteLength !== detailEntry.byteLength) {
-          throw new Error(`detail byte length mismatch: expected ${detailEntry.byteLength}, got ${byteLength}`)
-        }
-        if (await textSha256(text) !== detailEntry.sha256) {
-          throw new Error("detail package SHA-256 mismatch")
-        }
-
-        const geometry = decodeEmbeddedGltf(text)
-        if (await sha256Hex(canonicalMeshBytes(geometry)) !== detailEntry.geometrySha256) {
-          throw new Error("detail geometry fingerprint mismatch")
-        }
+        const nextManifest = parseMeshRegionManifest(await response.text())
         if (!cancelled) {
-          setPartition(partitionMeshRegions(geometry))
+          setManifest(nextManifest)
         }
       } catch (caught) {
         if (!controller.signal.aborted && !cancelled) {
-          setAssetError(caught instanceof Error ? caught.message : "mesh region experiment failed")
+          setAssetError(caught instanceof Error ? caught.message : "mesh region manifest failed")
         }
       }
     }
 
-    void load()
+    void loadManifest()
     return () => {
       cancelled = true
       controller.abort()
@@ -186,6 +176,10 @@ export function MeshRegionPrioritizationExperiment() {
   }, [])
 
   const camera = cameraPresets[cameraPresetId]
+  const partition = useMemo(
+    () => manifest === null ? null : partitionMeshRegionManifest(manifest),
+    [manifest],
+  )
   const comparison = useMemo(() => {
     if (partition === null) {
       return null
@@ -202,19 +196,125 @@ export function MeshRegionPrioritizationExperiment() {
     return {sourceOrder, viewPriority, rows: resultRows(sourceOrder, viewPriority)}
   }, [partition, camera, bandwidthMbps, latencyMs, budgetMs])
 
-  const duplicatedPercent = partition === null || partition.monolithicPayloadBytes === 0
+  const verificationOrder = useMemo(() => {
+    if (partition === null) {
+      return []
+    }
+    return simulateMeshRegionStreaming({
+      partition,
+      cameraPosition: camera.position,
+      bandwidthMbps: 1,
+      latencyMs: 0,
+      budgetMs: 0,
+      strategy: "view-priority",
+    }).deliveries.map((delivery) => delivery.id)
+  }, [partition, camera])
+
+  useEffect(() => {
+    if (manifest === null || verificationOrder.length === 0) {
+      return
+    }
+
+    const controller = new AbortController()
+    let cancelled = false
+    const initialStates: Partial<Record<MeshRegionId, PackageState>> = {}
+    for (const entry of manifest.regions) {
+      initialStates[entry.id] = {status: "queued", message: "waiting for verification"}
+    }
+    setPackageStates(initialStates)
+
+    const updatePackage = (id: MeshRegionId, state: PackageState) => {
+      if (!cancelled) {
+        setPackageStates((current) => ({...current, [id]: state}))
+      }
+    }
+
+    const verifyPackages = async () => {
+      for (const id of verificationOrder) {
+        const entry = manifest.regions.find((region) => region.id === id)
+        if (entry === undefined) {
+          updatePackage(id, {status: "rejected", message: "region is missing from manifest"})
+          continue
+        }
+
+        updatePackage(id, {status: "fetching", message: "downloaded bytes are not usable yet"})
+        try {
+          const response = await fetch(`./assets/object-regions/${entry.file}`, {
+            cache: "no-store",
+            signal: controller.signal,
+          })
+          if (!response.ok) {
+            throw new Error(`request failed with ${response.status}`)
+          }
+          const text = await response.text()
+          const byteLength = new TextEncoder().encode(text).byteLength
+          if (byteLength !== entry.byteLength) {
+            throw new Error(`byte length mismatch: expected ${entry.byteLength}, got ${byteLength}`)
+          }
+          if (await textSha256(text) !== entry.sha256) {
+            throw new Error("package SHA-256 mismatch")
+          }
+
+          const regionPackage = parseMeshRegionPackage(text)
+          if (
+            regionPackage.region !== entry.id ||
+            regionPackage.sourceGeometrySha256 !== manifest.sourceGeometrySha256 ||
+            regionPackage.firstTriangle !== entry.firstTriangle ||
+            regionPackage.sourceTriangleIndexes.length !== entry.triangleCount ||
+            regionPackage.sourceVertexIndexes.length !== entry.vertexCount
+          ) {
+            throw new Error("package provenance does not match the manifest")
+          }
+
+          const geometry = decodeMeshRegionPackage(regionPackage)
+          if (await sha256Hex(canonicalMeshBytes(geometry)) !== entry.geometrySha256) {
+            throw new Error("region geometry fingerprint mismatch")
+          }
+
+          updatePackage(id, {
+            status: "verified",
+            message: `${entry.triangleCount} triangles promoted after byte, hash, provenance, and geometry checks`,
+          })
+        } catch (caught) {
+          if (controller.signal.aborted) {
+            return
+          }
+          updatePackage(id, {
+            status: "rejected",
+            message: caught instanceof Error ? caught.message : "package verification failed",
+          })
+        }
+      }
+    }
+
+    void verifyPackages()
+    return () => {
+      cancelled = true
+      controller.abort()
+    }
+  }, [manifest, verificationOrder, verificationRun])
+
+  const rawDuplicationPercent = partition === null || partition.monolithicGeometryBytes === 0
     ? 0
-    : (partition.regionPayloadBytes - partition.monolithicPayloadBytes) / partition.monolithicPayloadBytes * 100
+    : (partition.regionGeometryBytes - partition.monolithicGeometryBytes) / partition.monolithicGeometryBytes * 100
+  const packageOverheadPercent = partition === null || partition.monolithicPackageBytes === 0
+    ? 0
+    : (partition.regionPackageBytes - partition.monolithicPackageBytes) / partition.monolithicPackageBytes * 100
+  const verifiedTriangles = manifest?.regions.reduce(
+    (total, entry) => total + (packageStates[entry.id]?.status === "verified" ? entry.triangleCount : 0),
+    0,
+  ) ?? 0
 
   return (
     <section className="experiment" id="mesh-regions-3d">
       <header className="experiment-header">
         <div className="experiment-number">10</div>
         <div>
-          <h2>View-prioritized mesh regions</h2>
+          <h2>Verified, view-prioritized mesh regions</h2>
           <p>
-            Partition the verified detail mesh by dominant surface direction, then compare source-order delivery with a
-            scheduler that sends view-facing regions first and the remaining regions from nearest to farthest.
+            Fetch six independently addressable packages from the verified detail mesh. View priority changes delivery
+            order, while each region becomes usable only after its bytes, SHA-256, source provenance, and local geometry
+            fingerprint match the manifest.
           </p>
         </div>
       </header>
@@ -258,19 +358,33 @@ export function MeshRegionPrioritizationExperiment() {
             unit="ms"
             onCommit={setBudgetMs}
           />
+          <button
+            className={styles.replayButton}
+            type="button"
+            disabled={manifest === null}
+            onClick={() => setVerificationRun((value) => value + 1)}
+          >
+            Replay package verification
+          </button>
           {partition !== null && (
-            <p className={styles.payloadNote}>
-              Independent raw regions use {formatBytes(partition.regionPayloadBytes)} versus {formatBytes(partition.monolithicPayloadBytes)}
-              for one monolithic raw mesh ({duplicatedPercent.toFixed(1)}% extra from shared vertices appearing in more than one region).
-            </p>
+            <div className={styles.payloadNote}>
+              <p>
+                Raw regional geometry: {formatBytes(partition.regionGeometryBytes)} vs. {formatBytes(partition.monolithicGeometryBytes)}
+                {" "}({rawDuplicationPercent.toFixed(1)}% extra from shared vertices).
+              </p>
+              <p>
+                Actual independent packages: {formatBytes(partition.regionPackageBytes)} vs. {formatBytes(partition.monolithicPackageBytes)}
+                {" "}({packageOverheadPercent.toFixed(1)}% package/provenance overhead).
+              </p>
+            </div>
           )}
         </div>
         <div className="visual-panel">
           {comparison === null && assetError === null && (
-            <p className={styles.status} aria-live="polite">Loading and verifying the detail mesh…</p>
+            <p className={styles.status} aria-live="polite">Loading verified region manifest…</p>
           )}
           {assetError !== null && <p className={styles.error} role="alert">{assetError}</p>}
-          {comparison !== null && (
+          {comparison !== null && manifest !== null && (
             <>
               <div className={styles.orderGrid}>
                 <div>
@@ -279,18 +393,20 @@ export function MeshRegionPrioritizationExperiment() {
                     {comparison.sourceOrder.deliveries.map((delivery) => (
                       <li className={delivery.viewFacing ? styles.viewFacing : undefined} key={delivery.id}>
                         <strong>{delivery.id}</strong>
-                        <span>{delivery.triangleCount} tris · {delivery.completedAtMs.toFixed(1)} ms</span>
+                        <span>{delivery.packageBytes} B · {delivery.completedAtMs.toFixed(1)} ms</span>
                       </li>
                     ))}
                   </ol>
                 </div>
                 <div>
-                  <h3>View priority</h3>
+                  <h3>View priority + verification</h3>
                   <ol className={styles.orderList}>
                     {comparison.viewPriority.deliveries.map((delivery) => (
                       <li className={delivery.viewFacing ? styles.viewFacing : undefined} key={delivery.id}>
                         <strong>{delivery.id}</strong>
-                        <span>{delivery.triangleCount} tris · {delivery.completedAtMs.toFixed(1)} ms</span>
+                        <span>
+                          {delivery.packageBytes} B · {delivery.completedAtMs.toFixed(1)} ms · {statusLabel(packageStates[delivery.id]?.status)}
+                        </span>
                       </li>
                     ))}
                   </ol>
@@ -308,7 +424,7 @@ export function MeshRegionPrioritizationExperiment() {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>First view-facing detail</td>
+                      <td>First view-facing package</td>
                       <td>{formatTime(comparison.sourceOrder.firstVisibleMs)}</td>
                       <td>{formatTime(comparison.viewPriority.firstVisibleMs)}</td>
                     </tr>
@@ -318,14 +434,18 @@ export function MeshRegionPrioritizationExperiment() {
                       <td>{comparison.viewPriority.visibleTrianglesWithinBudget} / {comparison.viewPriority.visibleTriangles}</td>
                     </tr>
                     <tr>
-                      <td>Whole regional mesh complete</td>
+                      <td>All region packages modeled complete</td>
                       <td>{formatTime(comparison.sourceOrder.completeMs)}</td>
                       <td>{formatTime(comparison.viewPriority.completeMs)}</td>
                     </tr>
                     <tr>
-                      <td>Total regional payload</td>
+                      <td>Total independent package bytes</td>
                       <td>{formatBytes(comparison.sourceOrder.payloadBytes)}</td>
                       <td>{formatBytes(comparison.viewPriority.payloadBytes)}</td>
+                    </tr>
+                    <tr>
+                      <td>Actually verified/promoted triangles</td>
+                      <td colSpan={2}>{verifiedTriangles} / {manifest.sourceTriangles}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -336,32 +456,40 @@ export function MeshRegionPrioritizationExperiment() {
                   <thead>
                     <tr>
                       <th>Region</th>
+                      <th>Package</th>
+                      <th>Raw geometry</th>
+                      <th>Verification</th>
                       <th>Facing camera</th>
-                      <th>Triangles</th>
-                      <th>Raw payload</th>
                       <th>Source rank</th>
                       <th>Priority rank</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {comparison.rows.map(({source, prioritized}) => (
-                      <tr className={source.viewFacing ? styles.viewFacingRow : undefined} key={source.id}>
-                        <td>{source.id}</td>
-                        <td>{source.viewFacing ? "yes" : "no"}</td>
-                        <td>{source.triangleCount}</td>
-                        <td>{formatBytes(source.payloadBytes)}</td>
-                        <td>{source.order}</td>
-                        <td>{prioritized.order}</td>
-                      </tr>
-                    ))}
+                    {comparison.rows.map(({source, prioritized}) => {
+                      const entry = manifest.regions.find((region) => region.id === source.id)
+                      const state = packageStates[source.id]
+                      return (
+                        <tr className={source.viewFacing ? styles.viewFacingRow : undefined} key={source.id}>
+                          <td>{source.id}</td>
+                          <td>{entry === undefined ? "missing" : formatBytes(entry.byteLength)}</td>
+                          <td>{formatBytes(source.geometryBytes)}</td>
+                          <td className={state?.status === "verified" ? styles.verified : state?.status === "rejected" ? styles.rejected : undefined}>
+                            {statusLabel(state?.status)}
+                          </td>
+                          <td>{source.viewFacing ? "yes" : "no"}</td>
+                          <td>{source.order}</td>
+                          <td>{prioritized.order}</td>
+                        </tr>
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>
               <p className="explanation">
-                Region packages are a deterministic scheduling model derived from the real verified detail mesh, not yet
-                separately materialized files. The comparison therefore proves ordering semantics and byte/triangle
-                accounting without claiming transport or renderer support that has not been implemented. Both schedules
-                send the same regions and finish at the same time; only useful detail arrival changes.
+                The timing table is still a deterministic network model, but its payload sizes now come from the real
+                committed region files. Package verification above is real browser work against those same files. Failed
+                regions are rejected independently; later packages can still verify because no region depends on another
+                region&apos;s geometry.
               </p>
             </>
           )}
