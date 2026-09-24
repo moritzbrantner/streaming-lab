@@ -11,6 +11,7 @@ import {
   partitionMeshRegionManifest,
   partitionMeshRegions,
   serializeMeshRegionPackage,
+  serializeMeshRegionProvenance,
   simulateMeshRegionStreaming,
 } from "./mesh-region-prioritization"
 
@@ -73,6 +74,9 @@ describe("mesh region prioritization", () => {
       const parsed = parseMeshRegionPackage(text)
       expect(text).toBe(serializeMeshRegionPackage(expectedPackage))
       expect(parsed.sourceGeometrySha256).toBe(sourceSha256)
+      expect(createHash("sha256").update(serializeMeshRegionProvenance(parsed)).digest("hex")).toBe(
+        entry!.provenanceSha256,
+      )
       expect(geometrySha256(decodeMeshRegionPackage(parsed))).toBe(entry!.geometrySha256)
       coveredTriangles.push(...parsed.sourceTriangleIndexes)
     }
