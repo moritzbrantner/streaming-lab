@@ -95,7 +95,7 @@ function lodForDistance(distance: number): {resolution: 32 | 16 | 8; collision: 
   return {resolution: 8, collision: false}
 }
 
-function generationCostMs(x: number, z: number, resolution: 32 | 16 | 8) {
+export function worldgenChunkGenerationCostMs(x: number, z: number, resolution: 32 | 16 | 8) {
   const base = resolution === 32 ? 18 : resolution === 16 ? 8 : 3
   const mixed =
     Math.imul(x, 73_856_093) ^
@@ -174,7 +174,7 @@ export function planSpatialView({
         collision,
         viewFacing,
         priority,
-        generationMs: generationCostMs(x, z, resolution),
+        generationMs: worldgenChunkGenerationCostMs(x, z, resolution),
       })
     }
   }
