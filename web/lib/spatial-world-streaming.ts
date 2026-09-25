@@ -228,7 +228,7 @@ export function simulateSpatialWorldStreaming({
   let revision = 0
   let currentDesired = new Map(initialPlans.map((plan) => [plan.key, plan] as const))
   let queue: QueuedTask[] = []
-  let running: RunningTask | null = null
+  const worker: {running: RunningTask | null} = {running: null}
   let currentUsefulMissing = new Set<string>()
   let currentNearFieldMissing = new Set<string>()
   let currentStep: SpatialTraversalStepResult | null = null
@@ -255,7 +255,7 @@ export function simulateSpatialWorldStreaming({
   }
 
   const updateDepth = () => {
-    maxQueueDepth = Math.max(maxQueueDepth, queue.length + (running === null ? 0 : 1))
+    maxQueueDepth = Math.max(maxQueueDepth, queue.length + (worker.running === null ? 0 : 1))
   }
 
   const evictCache = () => {
@@ -276,11 +276,11 @@ export function simulateSpatialWorldStreaming({
   }
 
   const startNext = () => {
-    if (running !== null || queue.length === 0) return
+    if (worker.running !== null || queue.length === 0) return
     sortQueue()
     const next = queue.shift()
     if (next === undefined) return
-    running = {
+    worker.running = {
       ...next,
       startedAtMs: timeMs,
       finishAtMs: timeMs + next.generationMs,
@@ -289,9 +289,9 @@ export function simulateSpatialWorldStreaming({
   }
 
   const completeRunning = () => {
-    const completed = running
+    const completed = worker.running
     if (completed === null) return
-    running = null
+    worker.running = null
 
     if (completed.obsolete || !currentDesired.has(completed.key)) {
       staleCompletions += 1
@@ -315,8 +315,8 @@ export function simulateSpatialWorldStreaming({
 
   const advanceTo = (targetMs: number) => {
     startNext()
-    while (running !== null && running.finishAtMs <= targetMs) {
-      timeMs = running.finishAtMs
+    while (worker.running !== null && worker.running.finishAtMs <= targetMs) {
+      timeMs = worker.running.finishAtMs
       completeRunning()
       startNext()
     }
@@ -355,7 +355,7 @@ export function simulateSpatialWorldStreaming({
     if (boundaryPolicy === "restart") {
       cancelledQueuedTasks += queue.length
       queue = []
-      if (running !== null) running.obsolete = true
+      if (worker.running !== null) worker.running.obsolete = true
     } else {
       queue = queue.flatMap((task) => {
         const nextPlan = nextDesired.get(task.key)
@@ -366,18 +366,18 @@ export function simulateSpatialWorldStreaming({
         retainedThisStep += 1
         return [{...task, ...nextPlan}]
       })
-      if (running !== null && !running.obsolete) {
-        if (nextDesired.has(running.key)) {
+      if (worker.running !== null && !worker.running.obsolete) {
+        if (nextDesired.has(worker.running.key)) {
           retainedThisStep += 1
         } else {
-          running.obsolete = true
+          worker.running.obsolete = true
         }
       }
     }
 
     currentDesired = nextDesired
     const outstanding = new Set(queue.filter((task) => !task.obsolete).map((task) => task.key))
-    if (running !== null && !running.obsolete) outstanding.add(running.key)
+    if (worker.running !== null && !worker.running.obsolete) outstanding.add(worker.running.key)
 
     let requestedThisStep = 0
     for (const plan of plans) {
@@ -406,7 +406,7 @@ export function simulateSpatialWorldStreaming({
       requestedChunks: requestedThisStep,
       cacheHits: stepCacheHits,
       retainedTasks: retainedThisStep,
-      queueDepth: queue.length + (running === null ? 0 : 1),
+      queueDepth: queue.length + (worker.running === null ? 0 : 1),
       firstUsefulMs: currentUsefulMissing.size === 0 ? 0 : null,
       nearFieldCompleteMs: currentNearFieldMissing.size === 0 ? 0 : null,
     }
@@ -415,10 +415,10 @@ export function simulateSpatialWorldStreaming({
     startNext()
   }
 
-  while (running !== null || queue.length > 0) {
+  while (worker.running !== null || queue.length > 0) {
     startNext()
-    if (running === null) break
-    timeMs = running.finishAtMs
+    if (worker.running === null) break
+    timeMs = worker.running.finishAtMs
     completeRunning()
   }
 
