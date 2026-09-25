@@ -47,6 +47,11 @@ export type SpatialTraversalStepResult = {
 
 export type SpatialWorldStreamingResult = {
   steps: SpatialTraversalStepResult[]
+  workerLanes: number
+  totalGenerationMs: number
+  durationMs: number
+  workerUtilizationPercent: number
+  maxBusyWorkers: number
   requestedChunks: number
   completedChunks: number
   cacheHits: number
@@ -69,6 +74,7 @@ export type SpatialWorldStreamingInput = {
   activeRadius?: number
   cacheLimit?: number
   route?: readonly SpatialChunkCoord[]
+  workerLanes?: number
 }
 
 type Vector2 = readonly [number, number]
@@ -199,9 +205,13 @@ export function simulateSpatialWorldStreaming({
   activeRadius = WORLDGEN_ACTIVE_RADIUS,
   cacheLimit = WORLDGEN_CACHE_LIMIT,
   route = worldgenSquareTraversal,
+  workerLanes = 1,
 }: SpatialWorldStreamingInput): SpatialWorldStreamingResult {
   if (!Number.isFinite(movementIntervalMs) || movementIntervalMs <= 0) {
     throw new Error("movement interval must be greater than zero")
+  }
+  if (!Number.isInteger(workerLanes) || workerLanes < 1 || workerLanes > 8) {
+    throw new Error("worker lanes must be an integer from 1 to 8")
   }
   if (route.length < 2 || route.some(([x, z]) => !Number.isInteger(x) || !Number.isInteger(z))) {
     throw new Error("spatial traversal requires at least two integer chunk coordinates")
@@ -228,7 +238,7 @@ export function simulateSpatialWorldStreaming({
   let revision = 0
   let currentDesired = new Map(initialPlans.map((plan) => [plan.key, plan] as const))
   let queue: QueuedTask[] = []
-  const worker: {running: RunningTask | null} = {running: null}
+  const workers: Array<RunningTask | null> = Array.from({length: workerLanes}, () => null)
   let currentUsefulMissing = new Set<string>()
   let currentNearFieldMissing = new Set<string>()
   let currentStep: SpatialTraversalStepResult | null = null
@@ -236,6 +246,8 @@ export function simulateSpatialWorldStreaming({
   const steps: SpatialTraversalStepResult[] = []
   let requestedChunks = 0
   let completedChunks = 0
+  let totalGenerationMs = 0
+  let maxBusyWorkers = 0
   let cacheHits = 0
   let retainedTasks = 0
   let cancelledQueuedTasks = 0
@@ -254,8 +266,12 @@ export function simulateSpatialWorldStreaming({
     )
   }
 
+  const busyWorkerCount = () => workers.reduce((total, task) => total + Number(task !== null), 0)
+
   const updateDepth = () => {
-    maxQueueDepth = Math.max(maxQueueDepth, queue.length + (worker.running === null ? 0 : 1))
+    const busy = busyWorkerCount()
+    maxBusyWorkers = Math.max(maxBusyWorkers, busy)
+    maxQueueDepth = Math.max(maxQueueDepth, queue.length + busy)
   }
 
   const evictCache = () => {
@@ -275,23 +291,24 @@ export function simulateSpatialWorldStreaming({
     maxCacheSize = Math.max(maxCacheSize, cache.size)
   }
 
-  const startNext = () => {
-    if (worker.running !== null || queue.length === 0) return
+  const startWorkers = () => {
+    if (queue.length === 0) return
     sortQueue()
-    const next = queue.shift()
-    if (next === undefined) return
-    worker.running = {
-      ...next,
-      startedAtMs: timeMs,
-      finishAtMs: timeMs + next.generationMs,
+    for (let index = 0; index < workers.length && queue.length > 0; index += 1) {
+      if (workers[index] !== null) continue
+      const next = queue.shift()
+      if (next === undefined) break
+      workers[index] = {
+        ...next,
+        startedAtMs: timeMs,
+        finishAtMs: timeMs + next.generationMs,
+      }
     }
     updateDepth()
   }
 
-  const completeRunning = () => {
-    const completed = worker.running
-    if (completed === null) return
-    worker.running = null
+  const completeTask = (completed: RunningTask) => {
+    totalGenerationMs += completed.generationMs
 
     if (completed.obsolete || !currentDesired.has(completed.key)) {
       staleCompletions += 1
@@ -313,12 +330,33 @@ export function simulateSpatialWorldStreaming({
     }
   }
 
+  const nextCompletion = () => {
+    let selectedIndex = -1
+    let selected: RunningTask | null = null
+    for (let index = 0; index < workers.length; index += 1) {
+      const task = workers[index]
+      if (
+        task !== null &&
+        (selected === null ||
+          task.finishAtMs < selected.finishAtMs ||
+          (task.finishAtMs === selected.finishAtMs && index < selectedIndex))
+      ) {
+        selected = task
+        selectedIndex = index
+      }
+    }
+    return {index: selectedIndex, task: selected}
+  }
+
   const advanceTo = (targetMs: number) => {
-    startNext()
-    while (worker.running !== null && worker.running.finishAtMs <= targetMs) {
-      timeMs = worker.running.finishAtMs
-      completeRunning()
-      startNext()
+    startWorkers()
+    while (true) {
+      const next = nextCompletion()
+      if (next.task === null || next.task.finishAtMs > targetMs) break
+      timeMs = next.task.finishAtMs
+      workers[next.index] = null
+      completeTask(next.task)
+      startWorkers()
     }
     timeMs = targetMs
   }
@@ -355,7 +393,9 @@ export function simulateSpatialWorldStreaming({
     if (boundaryPolicy === "restart") {
       cancelledQueuedTasks += queue.length
       queue = []
-      if (worker.running !== null) worker.running.obsolete = true
+      for (const task of workers) {
+        if (task !== null) task.obsolete = true
+      }
     } else {
       queue = queue.flatMap((task) => {
         const nextPlan = nextDesired.get(task.key)
@@ -366,18 +406,21 @@ export function simulateSpatialWorldStreaming({
         retainedThisStep += 1
         return [{...task, ...nextPlan}]
       })
-      if (worker.running !== null && !worker.running.obsolete) {
-        if (nextDesired.has(worker.running.key)) {
+      for (const task of workers) {
+        if (task === null || task.obsolete) continue
+        if (nextDesired.has(task.key)) {
           retainedThisStep += 1
         } else {
-          worker.running.obsolete = true
+          task.obsolete = true
         }
       }
     }
 
     currentDesired = nextDesired
     const outstanding = new Set(queue.filter((task) => !task.obsolete).map((task) => task.key))
-    if (worker.running !== null && !worker.running.obsolete) outstanding.add(worker.running.key)
+    for (const task of workers) {
+      if (task !== null && !task.obsolete) outstanding.add(task.key)
+    }
 
     let requestedThisStep = 0
     for (const plan of plans) {
@@ -406,20 +449,22 @@ export function simulateSpatialWorldStreaming({
       requestedChunks: requestedThisStep,
       cacheHits: stepCacheHits,
       retainedTasks: retainedThisStep,
-      queueDepth: queue.length + (worker.running === null ? 0 : 1),
+      queueDepth: queue.length + busyWorkerCount(),
       firstUsefulMs: currentUsefulMissing.size === 0 ? 0 : null,
       nearFieldCompleteMs: currentNearFieldMissing.size === 0 ? 0 : null,
     }
     steps.push(currentStep)
     updateDepth()
-    startNext()
+    startWorkers()
   }
 
-  while (worker.running !== null || queue.length > 0) {
-    startNext()
-    if (worker.running === null) break
-    timeMs = worker.running.finishAtMs
-    completeRunning()
+  while (queue.length > 0 || busyWorkerCount() > 0) {
+    startWorkers()
+    const next = nextCompletion()
+    if (next.task === null) break
+    timeMs = next.task.finishAtMs
+    workers[next.index] = null
+    completeTask(next.task)
   }
 
   const firstUseful = steps.flatMap((step) => (step.firstUsefulMs === null ? [] : [step.firstUsefulMs]))
@@ -429,6 +474,12 @@ export function simulateSpatialWorldStreaming({
 
   return {
     steps,
+    workerLanes,
+    totalGenerationMs,
+    durationMs: timeMs,
+    workerUtilizationPercent:
+      timeMs === 0 ? 0 : totalGenerationMs / (timeMs * workerLanes) * 100,
+    maxBusyWorkers,
     requestedChunks,
     completedChunks,
     cacheHits,
