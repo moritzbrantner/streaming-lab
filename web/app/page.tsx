@@ -4,6 +4,7 @@ import {
   ChunkingExperiment,
   NetworkExperiment,
 } from "@/components/experiments"
+import {ChunkLodPromotionExperiment} from "@/components/chunk-lod-promotion-experiment"
 import {MeshCompressionExperiment} from "@/components/mesh-compression-experiment"
 import {MeshRefinementExperiment} from "@/components/mesh-refinement-experiment"
 import {MeshRegionPrioritizationExperiment} from "@/components/mesh-region-prioritization-experiment"
@@ -40,6 +41,7 @@ export default function Home() {
           <a href="#mesh-compression-3d">3D compression</a>
           <a href="#mesh-regions-3d">3D regions</a>
           <a href="#spatial-world-streaming">World chunks</a>
+          <a href="#chunk-lod-promotion">Chunk LOD</a>
         </nav>
       </section>
 
@@ -74,6 +76,7 @@ export default function Home() {
         <MeshCompressionExperiment />
         <MeshRegionPrioritizationExperiment />
         <SpatialWorldStreamingExperiment />
+        <ChunkLodPromotionExperiment />
       </div>
 
       <section className="shell next-layer">
