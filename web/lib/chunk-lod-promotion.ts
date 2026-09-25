@@ -273,10 +273,12 @@ export function simulateChunkLodPromotion({
 
     for (const key of [...invisibleCoordinates]) {
       const plan = currentDesired.get(key)
-      if (plan !== undefined && canRender(plan)) invisibleCoordinates.delete(key)
-    }
-    if (currentStep.firstRenderableMs === null && invisibleCoordinates.size === 0) {
-      currentStep.firstRenderableMs = timeMs - currentStep.atMs
+      if (plan !== undefined && canRender(plan)) {
+        invisibleCoordinates.delete(key)
+        if (currentStep.firstRenderableMs === null) {
+          currentStep.firstRenderableMs = timeMs - currentStep.atMs
+        }
+      }
     }
 
     for (const key of [...incompleteNearField]) {
