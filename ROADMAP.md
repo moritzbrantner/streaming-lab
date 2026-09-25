@@ -36,7 +36,7 @@ The roadmap is organized around observable streaming behavior rather than protoc
 - [x] Compare complete LOD checkpoints with delta/refinement packages using the same source mesh.
 - [x] Add deterministic lossless geometry compression and measure browser-local decode cost versus bytes saved.
 - [x] Model deterministic view-facing and nearby mesh-region prioritization over the verified source mesh.
-- [ ] Materialize independently addressable region packages and verify them before promotion.
+- [x] Materialize independently addressable region packages and verify them before promotion.
 - [ ] Explore parity/FEC for high-priority base geometry before adding more transport-specific behavior.
 - [x] Model WorldGen-shaped spatial chunk streaming with bounded cache, deterministic LOD costs, retained work, and movement/view priority.
 - [x] Compare proxy-first chunk LOD promotion with direct full-detail generation.
