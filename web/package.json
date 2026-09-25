@@ -7,7 +7,8 @@
     "build": "next build",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
-    "check:assets": "bun run scripts/check-object-assets.ts && bun run scripts/check-refinement-assets.ts",
+    "generate:region-assets": "bun run scripts/generate-region-assets.ts",
+    "check:assets": "bun run scripts/check-object-assets.ts && bun run scripts/check-refinement-assets.ts && bun run scripts/check-region-assets.ts",
     "check:boundaries": "bun run scripts/check-boundaries.ts",
     "check": "bun run test && bun run typecheck && bun run check:assets && bun run check:boundaries && bun run build"
   },
