@@ -1,0 +1,121 @@
+.control {
+  display: grid;
+  gap: 10px;
+}
+
+.control > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.control output {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.control select,
+.control input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 10px;
+  background: #0d131c;
+  color: var(--text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.control select:focus,
+.control input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.control input:disabled {
+  opacity: 0.45;
+}
+
+.note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.table th,
+.table td {
+  padding: 10px 9px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.table th:first-child,
+.table td:first-child {
+  text-align: left;
+}
+
+.table tbody th {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.table td {
+  color: var(--muted);
+}
+
+.barGrid {
+  display: grid;
+  gap: 15px;
+  margin-top: 26px;
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: minmax(145px, 0.6fr) 58px minmax(100px, 1fr) 58px minmax(100px, 1fr);
+  gap: 9px;
+  align-items: center;
+  font-size: 0.76rem;
+}
+
+.barRow > span {
+  color: var(--muted);
+}
+
+.track {
+  height: 11px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #0d131c;
+}
+
+.track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+@media (max-width: 700px) {
+  .barRow {
+    grid-template-columns: 1fr 58px minmax(80px, 1fr);
+  }
+
+  .barRow strong {
+    grid-column: 1 / -1;
+  }
+}
