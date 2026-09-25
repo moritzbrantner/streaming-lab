@@ -9,6 +9,7 @@ import {MeshRefinementExperiment} from "@/components/mesh-refinement-experiment"
 import {MeshRegionPrioritizationExperiment} from "@/components/mesh-region-prioritization-experiment"
 import {ObjectStreamingExperiment} from "@/components/object-streaming-experiment"
 import {QueuePressureExperiment} from "@/components/queue-pressure-experiment"
+import {SpatialWorldStreamingExperiment} from "@/components/spatial-world-streaming-experiment"
 import {VerifiedObjectStreamExperiment} from "@/components/verified-object-stream-experiment"
 
 const concepts = [
@@ -38,6 +39,7 @@ export default function Home() {
           <a href="#mesh-refinements-3d">3D refinements</a>
           <a href="#mesh-compression-3d">3D compression</a>
           <a href="#mesh-regions-3d">3D regions</a>
+          <a href="#spatial-world-streaming">World chunks</a>
         </nav>
       </section>
 
@@ -71,6 +73,7 @@ export default function Home() {
         <MeshRefinementExperiment />
         <MeshCompressionExperiment />
         <MeshRegionPrioritizationExperiment />
+        <SpatialWorldStreamingExperiment />
       </div>
 
       <section className="shell next-layer">
