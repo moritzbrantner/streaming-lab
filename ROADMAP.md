@@ -10,6 +10,7 @@ The roadmap is organized around observable streaming behavior rather than protoc
 - [x] Adaptive bitrate selection from changing throughput.
 - [x] Watermarks and queue-pressure policies.
 - [ ] Head-of-line blocking versus independent streams.
+- [ ] Compare one generation lane with a small number of independent spatial worker lanes.
 
 ## Layer 2 — real browser streams
 
@@ -38,7 +39,7 @@ The roadmap is organized around observable streaming behavior rather than protoc
 - [ ] Materialize independently addressable region packages and verify them before promotion.
 - [ ] Explore parity/FEC for high-priority base geometry before adding more transport-specific behavior.
 - [x] Model WorldGen-shaped spatial chunk streaming with bounded cache, deterministic LOD costs, retained work, and movement/view priority.
-- [ ] Compare proxy-first chunk LOD promotion with direct full-detail generation.
+- [x] Compare proxy-first chunk LOD promotion with direct full-detail generation.
 
 ## Layer 5 — robustness
 
