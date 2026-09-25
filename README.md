@@ -14,6 +14,7 @@ The lab follows the same learning-by-experiment approach as Collision Lab: expla
 - **Progressive 3D objects** — compare a small renderable proxy followed by dependent refinements with larger independent LOD checkpoints that recover more cleanly from missing packets.
 - **View-prioritized mesh regions** — partition the verified detail mesh by surface direction and compare source-order delivery with view-facing and nearby scheduling.
 - **Spatial world streaming** — move a WorldGen-shaped chunk window through a deterministic route and compare restart, retained, movement-aware, and view-aware scheduling.
+- **Progressive chunk LOD** — compare direct target generation with dependent coarse-to-fine refinements and independent LOD checkpoints under stationary and moving workloads.
 
 ## Architecture
 
