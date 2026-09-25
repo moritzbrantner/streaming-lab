@@ -13,6 +13,7 @@ The lab follows the same learning-by-experiment approach as Collision Lab: expla
 - **Watermarks and queue pressure** — compare pause/resume hysteresis with dropping newest or oldest queued work before the queue reaches capacity.
 - **Progressive 3D objects** — compare a small renderable proxy followed by dependent refinements with larger independent LOD checkpoints that recover more cleanly from missing packets.
 - **View-prioritized mesh regions** — partition the verified detail mesh by surface direction and compare source-order delivery with view-facing and nearby scheduling.
+- **Spatial world streaming** — move a WorldGen-shaped chunk window through a deterministic route and compare restart, retained, movement-aware, and view-aware scheduling.
 
 ## Architecture
 
