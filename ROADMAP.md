@@ -10,7 +10,7 @@ The roadmap is organized around observable streaming behavior rather than protoc
 - [x] Adaptive bitrate selection from changing throughput.
 - [x] Watermarks and queue-pressure policies.
 - [ ] Head-of-line blocking versus independent streams.
-- [ ] Compare one generation lane with a small number of independent spatial worker lanes.
+- [x] Compare one generation lane with a small number of independent spatial worker lanes.
 
 ## Layer 2 — real browser streams
 
