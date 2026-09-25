@@ -15,6 +15,7 @@ The lab follows the same learning-by-experiment approach as Collision Lab: expla
 - **View-prioritized mesh regions** — partition the verified detail mesh by surface direction and compare source-order delivery with view-facing and nearby scheduling.
 - **Spatial world streaming** — move a WorldGen-shaped chunk window through a deterministic route and compare restart, retained, movement-aware, and view-aware scheduling.
 - **Progressive chunk LOD** — compare direct target generation with dependent coarse-to-fine refinements and independent LOD checkpoints under stationary and moving workloads.
+- **Spatial worker lanes** — compare one, two, and four deterministic chunk-generation lanes to expose head-of-line delay, queue pressure, stale work, and utilization.
 
 ## Architecture
 
