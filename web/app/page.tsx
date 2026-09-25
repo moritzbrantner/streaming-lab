@@ -10,6 +10,7 @@ import {MeshRefinementExperiment} from "@/components/mesh-refinement-experiment"
 import {MeshRegionPrioritizationExperiment} from "@/components/mesh-region-prioritization-experiment"
 import {ObjectStreamingExperiment} from "@/components/object-streaming-experiment"
 import {QueuePressureExperiment} from "@/components/queue-pressure-experiment"
+import {SpatialWorkerLanesExperiment} from "@/components/spatial-worker-lanes-experiment"
 import {SpatialWorldStreamingExperiment} from "@/components/spatial-world-streaming-experiment"
 import {VerifiedObjectStreamExperiment} from "@/components/verified-object-stream-experiment"
 
@@ -42,6 +43,7 @@ export default function Home() {
           <a href="#mesh-regions-3d">3D regions</a>
           <a href="#spatial-world-streaming">World chunks</a>
           <a href="#chunk-lod-promotion">Chunk LOD</a>
+          <a href="#spatial-worker-lanes">Worker lanes</a>
         </nav>
       </section>
 
@@ -77,6 +79,7 @@ export default function Home() {
         <MeshRegionPrioritizationExperiment />
         <SpatialWorldStreamingExperiment />
         <ChunkLodPromotionExperiment />
+        <SpatialWorkerLanesExperiment />
       </div>
 
       <section className="shell next-layer">
