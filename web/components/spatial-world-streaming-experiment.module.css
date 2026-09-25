@@ -1,0 +1,97 @@
+.numberControl input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 10px;
+  background: #0d131c;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.numberControl input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.modelNote {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.comparisonTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.comparisonTable th,
+.comparisonTable td {
+  padding: 10px 9px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.comparisonTable th:first-child,
+.comparisonTable td:first-child {
+  text-align: left;
+}
+
+.comparisonTable tbody th {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.comparisonTable td {
+  color: var(--muted);
+}
+
+.queueComparison {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.queueRow {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.45fr) minmax(0, 1.55fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.queueRow strong {
+  font-size: 0.78rem;
+}
+
+.queueBars {
+  display: flex;
+  align-items: end;
+  gap: 3px;
+  height: 74px;
+  padding: 8px 8px 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #0d131c;
+}
+
+.queueBars span {
+  flex: 1;
+  min-width: 5px;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+  opacity: 0.78;
+}
+
+@media (max-width: 620px) {
+  .queueRow {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
