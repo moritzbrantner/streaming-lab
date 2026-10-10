@@ -119,6 +119,20 @@ button, input { font: inherit; }
 .control > span { display: flex; justify-content: space-between; gap: 12px; font-size: 0.9rem; font-weight: 700; }
 .control output { color: var(--accent); font-variant-numeric: tabular-nums; }
 .control input[type="range"] { width: 100%; accent-color: var(--accent); }
+.numeric-editor { display: inline-flex; align-items: center; gap: 6px; }
+.numeric-editor input {
+  width: 5.5em;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.numeric-editor input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.numeric-editor small { color: var(--muted); font-size: 0.78rem; font-weight: 600; }
 .toggle-control {
   display: flex;
   align-items: center;

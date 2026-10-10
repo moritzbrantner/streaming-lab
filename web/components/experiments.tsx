@@ -7,41 +7,7 @@ import {
   simulateBuffer,
   simulateNetwork,
 } from "@/lib/models"
-
-function RangeControl({
-  label,
-  value,
-  min,
-  max,
-  step = 1,
-  unit,
-  onChange,
-}: {
-  label: string
-  value: number
-  min: number
-  max: number
-  step?: number
-  unit: string
-  onChange: (value: number) => void
-}) {
-  return (
-    <label className="control">
-      <span>
-        {label}
-        <output>{value.toLocaleString()} {unit}</output>
-      </span>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(event) => onChange(Number(event.target.value))}
-      />
-    </label>
-  )
-}
+import {NumericControl} from "./numeric-control"
 
 function Metric({label, value}: {label: string; value: string}) {
   return (
@@ -81,8 +47,8 @@ export function ChunkingExperiment() {
       />
       <div className="experiment-body">
         <div className="controls">
-          <RangeControl label="Chunk size" value={chunkBytes} min={1_024} max={131_072} step={1_024} unit="bytes" onChange={setChunkBytes} />
-          <RangeControl label="Framing per chunk" value={framingBytes} min={0} max={256} step={8} unit="bytes" onChange={setFramingBytes} />
+          <NumericControl label="Chunk size" value={chunkBytes} min={1_024} max={131_072} step={1_024} unit="bytes" onCommit={setChunkBytes} slider />
+          <NumericControl label="Framing per chunk" value={framingBytes} min={0} max={256} step={8} unit="bytes" onCommit={setFramingBytes} slider />
         </div>
         <div className="visual-panel">
           <div className="metrics-grid">
@@ -121,9 +87,9 @@ export function BackpressureExperiment() {
       />
       <div className="experiment-body">
         <div className="controls">
-          <RangeControl label="Producer" value={producerRate} min={0} max={100} unit="chunks/s" onChange={setProducerRate} />
-          <RangeControl label="Consumer" value={consumerRate} min={0} max={100} unit="chunks/s" onChange={setConsumerRate} />
-          <RangeControl label="Buffer capacity" value={capacity} min={5} max={100} step={5} unit="chunks" onChange={setCapacity} />
+          <NumericControl label="Producer" value={producerRate} min={0} max={100} unit="chunks/s" onCommit={setProducerRate} slider />
+          <NumericControl label="Consumer" value={consumerRate} min={0} max={100} unit="chunks/s" onCommit={setConsumerRate} slider />
+          <NumericControl label="Buffer capacity" value={capacity} min={5} max={100} step={5} unit="chunks" onCommit={setCapacity} slider />
         </div>
         <div className="visual-panel">
           <div className="buffer-chart" aria-label="Buffer occupancy over four simulated seconds">
@@ -166,8 +132,8 @@ export function NetworkExperiment() {
       />
       <div className="experiment-body">
         <div className="controls">
-          <RangeControl label="Packet loss" value={lossPercent} min={0} max={40} unit="%" onChange={setLossPercent} />
-          <RangeControl label="Additional jitter" value={jitterMs} min={0} max={500} step={10} unit="ms" onChange={setJitterMs} />
+          <NumericControl label="Packet loss" value={lossPercent} min={0} max={40} unit="%" onCommit={setLossPercent} slider />
+          <NumericControl label="Additional jitter" value={jitterMs} min={0} max={500} step={10} unit="ms" onCommit={setJitterMs} slider />
           <label className="toggle-control">
             <input type="checkbox" checked={retry} onChange={(event) => setRetry(event.target.checked)} />
             <span>Retry one lost transmission</span>
@@ -218,7 +184,7 @@ export function AdaptiveBitrateExperiment() {
       />
       <div className="experiment-body">
         <div className="controls">
-          <RangeControl label="Typical throughput" value={throughput} min={0.5} max={8} step={0.5} unit="Mbps" onChange={setThroughput} />
+          <NumericControl label="Typical throughput" value={throughput} min={0.5} max={8} step={0.5} unit="Mbps" onCommit={setThroughput} slider />
           <div className="quality-key">
             <span>240p · 0.35 Mbps</span>
             <span>360p · 0.8 Mbps</span>
