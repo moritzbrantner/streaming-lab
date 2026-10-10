@@ -2,6 +2,7 @@
 
 import {type ChangeEvent, useMemo, useState} from "react"
 import {simulateQueuePressure, type QueuePressurePolicy} from "@/lib/queue-pressure"
+import {NumericControl} from "./numeric-control"
 import styles from "./queue-pressure-experiment.module.css"
 
 const policyLabels: Record<QueuePressurePolicy, string> = {
@@ -17,41 +18,6 @@ const policyExplanations: Record<QueuePressurePolicy, string> = {
     "New arrivals are discarded once the queue reaches the high watermark. Existing queued work is preserved, which favors completeness of older work over freshness.",
   "drop-oldest":
     "Queued work is evicted once pressure reaches the high watermark so fresher arrivals can enter. This sacrifices backlog to keep the stream closer to the present.",
-}
-
-function RangeControl({
-  label,
-  value,
-  min,
-  max,
-  step = 1,
-  unit,
-  onChange,
-}: {
-  label: string
-  value: number
-  min: number
-  max: number
-  step?: number
-  unit: string
-  onChange: (value: number) => void
-}) {
-  return (
-    <label className="control">
-      <span>
-        {label}
-        <output>{value.toLocaleString()} {unit}</output>
-      </span>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(Number(event.target.value))}
-      />
-    </label>
-  )
 }
 
 function Metric({label, value}: {label: string; value: string}) {
@@ -98,26 +64,28 @@ export function QueuePressureExperiment() {
       </header>
       <div className="experiment-body">
         <div className="controls">
-          <RangeControl label="Producer" value={producerRate} min={0} max={100} unit="chunks/s" onChange={setProducerRate} />
-          <RangeControl label="Consumer" value={consumerRate} min={0} max={100} unit="chunks/s" onChange={setConsumerRate} />
-          <RangeControl label="Queue capacity" value={capacity} min={20} max={100} step={5} unit="chunks" onChange={setCapacity} />
-          <RangeControl
+          <NumericControl label="Producer" value={producerRate} min={0} max={100} unit="chunks/s" onCommit={setProducerRate} slider />
+          <NumericControl label="Consumer" value={consumerRate} min={0} max={100} unit="chunks/s" onCommit={setConsumerRate} slider />
+          <NumericControl label="Queue capacity" value={capacity} min={20} max={100} step={5} unit="chunks" onCommit={setCapacity} slider />
+          <NumericControl
             label="Low watermark"
             value={lowWatermarkPercent}
             min={5}
             max={highWatermarkPercent - 5}
             step={5}
             unit="%"
-            onChange={setLowWatermarkPercent}
+            onCommit={setLowWatermarkPercent}
+            slider
           />
-          <RangeControl
+          <NumericControl
             label="High watermark"
             value={highWatermarkPercent}
             min={lowWatermarkPercent + 5}
             max={95}
             step={5}
             unit="%"
-            onChange={setHighWatermarkPercent}
+            onCommit={setHighWatermarkPercent}
+            slider
           />
           <label className="control">
             <span>Pressure policy</span>
